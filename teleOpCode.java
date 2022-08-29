@@ -25,12 +25,39 @@ public class teleOpCode extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                
+
                 // MOVE ROBOT
                 FL.setPower(gamepad1.right_stick_y * 0.5);
                 BL.setPower(gamepad1.right_stick_y * 0.5);
                 FR.setPower(gamepad1.left_stick_y * 0.5);
                 BR.setPower(gamepad1.left_stick_y * 0.5);
+
+                if (gamepad1.left_trigger > 0) {
+                    FR.setPower(gamepad1.left_stick_x * .5);
+                    BL.setPower(gamepad1.left_stick_x * .5);
+                    FL.setPower(-gamepad1.left_stick_x * .5);
+                    BR.setPower(-gamepad1.left_stick_x * .5);
+
+                    if (gamepad1.left_trigger == 0) {
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        BR.setPower(0);
+                        BL.setPower(0);
+                    }
+                }
+                if (gamepad1.right_trigger > 0) {
+                    FR.setPower(-gamepad1.right_trigger * .5);
+                    BL.setPower(-gamepad1.right_trigger * .5);
+                    FL.setPower(gamepad1.right_trigger * .5);
+                    BR.setPower(gamepad1.right_trigger * .5);
+
+                    if (gamepad1.right_trigger == 0) {
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        BR.setPower(0);
+                        BL.setPower(0);
+                    }
+                }
             }
         }
     }
