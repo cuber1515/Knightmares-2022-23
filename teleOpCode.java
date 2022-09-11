@@ -19,7 +19,8 @@ public class teleOpCode extends LinearOpMode {
         BL = hardwareMap.dcMotor.get("Back Left");
 
         FL.setDirection((DcMotorSimple.Direction.REVERSE));
-        BL.setDirection((DcMotorSimple.Direction.REVERSE));
+        FR.setDirection((DcMotorSimple.Direction.REVERSE));
+        BR.setDirection((DcMotorSimple.Direction.REVERSE));
 
         waitForStart();
 
@@ -27,16 +28,17 @@ public class teleOpCode extends LinearOpMode {
             while (opModeIsActive()) {
 
                 // MOVE ROBOT
-                FL.setPower(gamepad1.right_stick_y * 0.5);
-                BL.setPower(gamepad1.right_stick_y * 0.5);
-                FR.setPower(gamepad1.left_stick_y * 0.5);
-                BR.setPower(gamepad1.left_stick_y * 0.5);
+                FR.setPower(gamepad1.right_stick_y * 0.5);
+                BR.setPower(gamepad1.right_stick_y * 0.5);
+                FL.setPower(gamepad1.left_stick_y * 0.5);
+                BL.setPower(gamepad1.left_stick_y * 0.5);
 
+                // Move to the left if the left trigger is pressed
                 if (gamepad1.left_trigger > 0) {
-                    FR.setPower(gamepad1.left_stick_x * .5);
-                    BL.setPower(gamepad1.left_stick_x * .5);
-                    FL.setPower(-gamepad1.left_stick_x * .5);
-                    BR.setPower(-gamepad1.left_stick_x * .5);
+                    FR.setPower(gamepad1.left_trigger * .5);
+                    BL.setPower(gamepad1.left_trigger * .5);
+                    FL.setPower(-gamepad1.left_trigger * .5);
+                    BR.setPower(-gamepad1.left_trigger * .5);
 
                     if (gamepad1.left_trigger == 0) {
                         FR.setPower(0);
@@ -45,6 +47,8 @@ public class teleOpCode extends LinearOpMode {
                         BL.setPower(0);
                     }
                 }
+
+                // Move to the right if the right trigger is pressed
                 if (gamepad1.right_trigger > 0) {
                     FR.setPower(-gamepad1.right_trigger * .5);
                     BL.setPower(-gamepad1.right_trigger * .5);
