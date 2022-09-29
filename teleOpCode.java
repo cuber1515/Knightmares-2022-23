@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 
 public class teleOpCode extends LinearOpMode {
     DcMotor FR, FL, BR, BL;
+    Servo LS, RS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,6 +19,9 @@ public class teleOpCode extends LinearOpMode {
         FL = hardwareMap.dcMotor.get("Front Left");
         BR = hardwareMap.dcMotor.get("Back Right");
         BL = hardwareMap.dcMotor.get("Back Left");
+
+        LS = hardwareMap.servo.get("Left Servo");
+        RS = hardwareMap.servo.get("Right Servo");
 
         FL.setDirection((DcMotorSimple.Direction.REVERSE));
         FR.setDirection((DcMotorSimple.Direction.REVERSE));
@@ -61,6 +66,10 @@ public class teleOpCode extends LinearOpMode {
                         BR.setPower(0);
                         BL.setPower(0);
                     }
+                }
+                if (gamepad1.a) {
+                    LS.setPosition(0.45);
+                    RS.setPosition(0.50);
                 }
             }
         }
