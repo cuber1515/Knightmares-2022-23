@@ -23,9 +23,7 @@ public class teleOpCode extends LinearOpMode {
         LS = hardwareMap.servo.get("Left Servo");
         RS = hardwareMap.servo.get("Right Servo");
 
-        FL.setDirection((DcMotorSimple.Direction.REVERSE));
-        FR.setDirection((DcMotorSimple.Direction.REVERSE));
-        BR.setDirection((DcMotorSimple.Direction.REVERSE));
+        FR.setDirection((DcMotor.Direction.REVERSE));
 
         waitForStart();
 
