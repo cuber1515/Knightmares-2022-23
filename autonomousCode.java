@@ -1,17 +1,47 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.List;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import org.firstinspires.ftc.teamcode.methodForEncoders;
 
 
 @Autonomous
-
+@Disabled
 public class autonomousCode extends LinearOpMode{
+
+    /**
+     * setting up TensorFlow
+     */
+
+    private static final String TFOD_MODEL_ASSET = "unknown";
+    private static final String[] LABELS = {
+            "unkown"
+    };
+
+    private static final String VUFORIA_KEY =
+            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+
+    private VuforiaLocalizer vuforia;
+
+    private TFObjectDetector tfod;
+
+
+    /**
+     * end of TensorFlow
+     */
+
     // start encoders
     public void startEncoders() {
         FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -179,18 +209,52 @@ public class autonomousCode extends LinearOpMode{
         BR.setPower(0);
     }
 
-    DcMotor FR,FL,BR,BL;
+    DcMotor FR, FL, BR, BL;
+    Servo LS, RS;
 
     @Override
-    public void runOpMode()throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         FR = hardwareMap.dcMotor.get("Front Right");
         FL = hardwareMap.dcMotor.get("Front Left");
         BR = hardwareMap.dcMotor.get("Back Right");
         BL = hardwareMap.dcMotor.get("Back Left");
 
-        FL.setDirection((DcMotorSimple.Direction.REVERSE));
-        BL.setDirection((DcMotorSimple.Direction.REVERSE));
+        LS = hardwareMap.servo.get("Left Servo");
+        RS = hardwareMap.servo.get("Right Servo");
 
-
+        FR.setDirection((DcMotor.Direction.REVERSE));
     }
+
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
+
 }
