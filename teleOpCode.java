@@ -101,7 +101,7 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // Close/Open claw
-                if (gamepad1.a) {
+                if (gamepad1.b) {
                     if (CS.getPosition() == 50){
                         CS.setPosition(55);
                     } else {
@@ -109,18 +109,30 @@ public class teleOpCode extends LinearOpMode {
                     }
                 }
 
-                // Raising claw
-                if (gamepad1.b) {
+                // Raising/lowering claw
+                if (gamepad1.y) {
                     AL.setPower(0.10);
                     if (!gamepad1.b) {
                         AL.setPower(0);
                     }
                 }
+                if (gamepad1.a) {
+                    AL.setPower(-0.10);
+                    if (!gamepad1.a) {
+                        AL.setPower(0);
+                    }
+                }
 
-                // Raising arm
-                if (gamepad1.y) {
+                // Raising/lowering arm
+                if (gamepad1.dpad_up) {
                     LA.setPower(0.25);
                     if (!gamepad1.y) {
+                        LA.setPower(0);
+                    }
+                }
+                if (gamepad1.dpad_down) {
+                    LA.setPower(-0.25);
+                    if (!gamepad1.dpad_down) {
                         LA.setPower(0);
                     }
                 }
