@@ -112,7 +112,7 @@ public class teleOpCode extends LinearOpMode {
                 // Raising/lowering claw
                 if (gamepad1.y) {
                     AL.setPower(0.10);
-                    if (!gamepad1.b) {
+                    if (!gamepad1.y) {
                         AL.setPower(0);
                     }
                 }
@@ -126,7 +126,7 @@ public class teleOpCode extends LinearOpMode {
                 // Raising/lowering arm
                 if (gamepad1.dpad_up) {
                     LA.setPower(0.25);
-                    if (!gamepad1.y) {
+                    if (!gamepad1.dpad_up) {
                         LA.setPower(0);
                     }
                 }
