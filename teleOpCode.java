@@ -11,9 +11,35 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 @TeleOp
 
 public class teleOpCode extends LinearOpMode {
+
+    // start encoders
+    public void startEncoders() {
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    // exit encoders
+    public void exitEncoders() {
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    // restart encoders
+    public void resetEncoders() {
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
     DcMotor FR, FL, BR, BL, AL, LA;
     Servo LS, RS, CS;
     ColorSensor subClawS;
+    int encoderArmLevel;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,6 +51,9 @@ public class teleOpCode extends LinearOpMode {
         AL = hardwareMap.dcMotor.get("Arm Lift");
         LA = hardwareMap.dcMotor.get("Linear Actuator");
 
+        AL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         LS = hardwareMap.servo.get("Left Servo");
         RS = hardwareMap.servo.get("Right Servo");
         CS = hardwareMap.servo.get("Claw Servo");
@@ -33,6 +62,8 @@ public class teleOpCode extends LinearOpMode {
 
         // Sensors
         subClawS = hardwareMap.colorSensor.get("Sub Claw Sensor");
+
+        int height = 0;
 
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -109,32 +140,179 @@ public class teleOpCode extends LinearOpMode {
                     }
                 }
 
-                // Raising/lowering claw
-                if (gamepad1.y) {
-                    AL.setPower(0.10);
-                    if (!gamepad1.y) {
-                        AL.setPower(0);
+                // Lowering/Raising arm
+                if (gamepad1.dpad_down) {
+                    if (height == 0) {
+                        encoderArmLevel = (int) (0);
+                    } else if (height == 1) {
+                        encoderArmLevel = (int) -(1 * 538);
+                    } else if (height == 2) {
+                        encoderArmLevel = (int) -(2 * 538);
                     }
+
+                    startEncoders();
+
+                    FL.setTargetPosition(encoderArmLevel);
+                    FR.setTargetPosition(encoderArmLevel);
+                    BL.setTargetPosition(encoderArmLevel);
+                    BR.setTargetPosition(encoderArmLevel);
+
+                    FL.setPower(0.25);
+                    FR.setPower(0.25);
+                    BL.setPower(0.25);
+                    BR.setPower(0.25);
+
+                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    }
+
+                    FL.setPower(0);
+                    FR.setPower(0);
+                    BL.setPower(0);
+                    BR.setPower(0);
+
+                    exitEncoders();resetEncoders();
+
+                    height = 0;
                 }
-                if (gamepad1.a) {
-                    AL.setPower(-0.10);
-                    if (!gamepad1.a) {
-                        AL.setPower(0);
+                if (gamepad1.dpad_left) {
+                    if (height == 0) {
+                        encoderArmLevel = (int) (1 * 538);
+                    } else if (height == 1) {
+                        encoderArmLevel = (int) (0);
+                    } else if (height == 2) {
+                        encoderArmLevel = (int) -(1 * 538);
                     }
+
+                    startEncoders();
+
+                    FL.setTargetPosition(encoderArmLevel);
+                    FR.setTargetPosition(encoderArmLevel);
+                    BL.setTargetPosition(encoderArmLevel);
+                    BR.setTargetPosition(encoderArmLevel);
+
+                    FL.setPower(0.25);
+                    FR.setPower(0.25);
+                    BL.setPower(0.25);
+                    BR.setPower(0.25);
+
+                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    }
+
+                    FL.setPower(0);
+                    FR.setPower(0);
+                    BL.setPower(0);
+                    BR.setPower(0);
+
+                    exitEncoders();resetEncoders();
+
+                    height = 1;
+                }
+                if (gamepad1.dpad_up) {
+                    if (height == 0) {
+                        encoderArmLevel = (int) (2 * 538);
+                    } else if (height == 1) {
+                        encoderArmLevel = (int) (1 * 538);
+                    } else if (height == 2) {
+                        encoderArmLevel = (int) (0);
+                    }
+
+                    startEncoders();
+
+                    FL.setTargetPosition(encoderArmLevel);
+                    FR.setTargetPosition(encoderArmLevel);
+                    BL.setTargetPosition(encoderArmLevel);
+                    BR.setTargetPosition(encoderArmLevel);
+
+                    FL.setPower(0.25);
+                    FR.setPower(0.25);
+                    BL.setPower(0.25);
+                    BR.setPower(0.25);
+
+                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    }
+
+                    FL.setPower(0);
+                    FR.setPower(0);
+                    BL.setPower(0);
+                    BR.setPower(0);
+
+                    exitEncoders();resetEncoders();
+
+                    height = 2;
                 }
 
-                // Raising/lowering arm
-                if (gamepad1.dpad_up) {
-                    LA.setPower(0.25);
-                    if (!gamepad1.dpad_up) {
-                        LA.setPower(0);
+                if (gamepad1.y) {
+                    int encoderArmHeight = (int) (0.25 * 538);
+                    startEncoders();
+
+                    FL.setTargetPosition(encoderArmHeight);
+                    FR.setTargetPosition(encoderArmHeight);
+                    BL.setTargetPosition(encoderArmHeight);
+                    BR.setTargetPosition(encoderArmHeight);
+
+                    FL.setPower(0.25);
+                    FR.setPower(0.25);
+                    BL.setPower(0.25);
+                    BR.setPower(0.25);
+
+                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
                     }
+
+                    FL.setPower(0);
+                    FR.setPower(0);
+                    BL.setPower(0);
+                    BR.setPower(0);
+
+                    exitEncoders();resetEncoders();
                 }
-                if (gamepad1.dpad_down) {
-                    LA.setPower(-0.25);
-                    if (!gamepad1.dpad_down) {
-                        LA.setPower(0);
+                if (gamepad1.a) {
+                    int encoderArmHeight = (int) -(0.25 * 538);
+                    startEncoders();
+
+                    FL.setTargetPosition(encoderArmHeight);
+                    FR.setTargetPosition(encoderArmHeight);
+                    BL.setTargetPosition(encoderArmHeight);
+                    BR.setTargetPosition(encoderArmHeight);
+
+                    FL.setPower(0.25);
+                    FR.setPower(0.25);
+                    BL.setPower(0.25);
+                    BR.setPower(0.25);
+
+                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
                     }
+
+                    FL.setPower(0);
+                    FR.setPower(0);
+                    BL.setPower(0);
+                    BR.setPower(0);
+
+                    exitEncoders();resetEncoders();
                 }
             }
         }
