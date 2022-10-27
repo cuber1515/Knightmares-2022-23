@@ -40,6 +40,7 @@ public class teleOpCode extends LinearOpMode {
     Servo LS, RS, CS;
     ColorSensor subClawS;
     int encoderArmLevel;
+    int encoderArmHeight;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,6 +65,7 @@ public class teleOpCode extends LinearOpMode {
         subClawS = hardwareMap.colorSensor.get("Sub Claw Sensor");
 
         int height = 0;
+        int armHeight = 0;
 
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
@@ -257,7 +259,14 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 if (gamepad1.y) {
-                    int encoderArmHeight = (int) (0.25 * 538);
+                    if (armHeight == 0) {
+                        encoderArmHeight = (int) (0.50 * 538);
+                    } else if (armHeight == 1) {
+                        encoderArmHeight = 0;
+                    } else if (armHeight == 2) {
+                        encoderArmHeight = (int) -(0.25 * 538);
+                    }
+
                     startEncoders();
 
                     FL.setTargetPosition(encoderArmHeight);
@@ -284,9 +293,17 @@ public class teleOpCode extends LinearOpMode {
                     BR.setPower(0);
 
                     exitEncoders();resetEncoders();
+                    armHeight = 1;
                 }
                 if (gamepad1.a) {
-                    int encoderArmHeight = (int) -(0.25 * 538);
+                    if (armHeight == 0) {
+                        encoderArmHeight = (int) (.75 * 538);
+                    } else if (armHeight == 1) {
+                        encoderArmHeight = (int) (.25 * 538);
+                    } else if (armHeight == 2) {
+                        encoderArmHeight = 0;
+                    }
+
                     startEncoders();
 
                     FL.setTargetPosition(encoderArmHeight);
@@ -313,6 +330,44 @@ public class teleOpCode extends LinearOpMode {
                     BR.setPower(0);
 
                     exitEncoders();resetEncoders();
+                    armHeight = 2;
+                }
+                if (gamepad1.x) {
+                    if (armHeight == 0) {
+                        encoderArmHeight = 0;
+                    } else if (armHeight ==  1) {
+                        encoderArmLevel = (int) -(.50 * 538);
+                    } else if (armHeight == 2){
+                        encoderArmHeight = (int) -(.75 * 538);
+                    }
+
+                    startEncoders();
+
+                    FL.setTargetPosition(encoderArmHeight);
+                    FR.setTargetPosition(encoderArmHeight);
+                    BL.setTargetPosition(encoderArmHeight);
+                    BR.setTargetPosition(encoderArmHeight);
+
+                    FL.setPower(0.25);
+                    FR.setPower(0.25);
+                    BL.setPower(0.25);
+                    BR.setPower(0.25);
+
+                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    }
+
+                    FL.setPower(0);
+                    FR.setPower(0);
+                    BL.setPower(0);
+                    BR.setPower(0);
+
+                    exitEncoders();resetEncoders();
+                    armHeight = 0;
                 }
             }
         }
