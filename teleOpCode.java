@@ -36,7 +36,7 @@ public class teleOpCode extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    DcMotor FR, FL, BR, BL, AL, LA;
+    DcMotor FR, FL, BR, BL, AM, LAM;
     Servo LS, RS, CS;
     ColorSensor subClawS;
     int encoderArmLevel;
@@ -49,11 +49,11 @@ public class teleOpCode extends LinearOpMode {
         FL = hardwareMap.dcMotor.get("Front Left");
         BR = hardwareMap.dcMotor.get("Back Right");
         BL = hardwareMap.dcMotor.get("Back Left");
-        AL = hardwareMap.dcMotor.get("Arm Lift");
-        LA = hardwareMap.dcMotor.get("Linear Actuator");
+        AM = hardwareMap.dcMotor.get("arm motor");
+        LAM = hardwareMap.dcMotor.get("linear actuator motor");
 
-        AL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         LS = hardwareMap.servo.get("Left Servo");
         RS = hardwareMap.servo.get("Right Servo");
@@ -154,28 +154,16 @@ public class teleOpCode extends LinearOpMode {
 
                     startEncoders();
 
-                    FL.setTargetPosition(encoderArmLevel);
-                    FR.setTargetPosition(encoderArmLevel);
-                    BL.setTargetPosition(encoderArmLevel);
-                    BR.setTargetPosition(encoderArmLevel);
+                    LAM.setTargetPosition(encoderArmLevel);
 
-                    FL.setPower(0.25);
-                    FR.setPower(0.25);
-                    BL.setPower(0.25);
-                    BR.setPower(0.25);
+                    LAM.setPower(0.25);
 
-                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    while (LAM.isBusy()) {
                     }
 
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    BL.setPower(0);
-                    BR.setPower(0);
+                    LAM.setPower(0);
 
                     exitEncoders();resetEncoders();
 
@@ -192,28 +180,16 @@ public class teleOpCode extends LinearOpMode {
 
                     startEncoders();
 
-                    FL.setTargetPosition(encoderArmLevel);
-                    FR.setTargetPosition(encoderArmLevel);
-                    BL.setTargetPosition(encoderArmLevel);
-                    BR.setTargetPosition(encoderArmLevel);
+                    LAM.setTargetPosition(encoderArmLevel);
 
-                    FL.setPower(0.25);
-                    FR.setPower(0.25);
-                    BL.setPower(0.25);
-                    BR.setPower(0.25);
+                    LAM.setPower(0.25);
 
-                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    while (LAM.isBusy()) {
                     }
 
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    BL.setPower(0);
-                    BR.setPower(0);
+                    LAM.setPower(0);
 
                     exitEncoders();resetEncoders();
 
@@ -230,28 +206,16 @@ public class teleOpCode extends LinearOpMode {
 
                     startEncoders();
 
-                    FL.setTargetPosition(encoderArmLevel);
-                    FR.setTargetPosition(encoderArmLevel);
-                    BL.setTargetPosition(encoderArmLevel);
-                    BR.setTargetPosition(encoderArmLevel);
+                    LAM.setTargetPosition(encoderArmLevel);
 
-                    FL.setPower(0.25);
-                    FR.setPower(0.25);
-                    BL.setPower(0.25);
-                    BR.setPower(0.25);
+                    LAM.setPower(0.25);
 
-                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    while (LAM.isBusy()) {
                     }
 
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    BL.setPower(0);
-                    BR.setPower(0);
+                    LAM.setPower(0);
 
                     exitEncoders();resetEncoders();
 
@@ -269,30 +233,19 @@ public class teleOpCode extends LinearOpMode {
 
                     startEncoders();
 
-                    FL.setTargetPosition(encoderArmHeight);
-                    FR.setTargetPosition(encoderArmHeight);
-                    BL.setTargetPosition(encoderArmHeight);
-                    BR.setTargetPosition(encoderArmHeight);
+                    AM.setTargetPosition(encoderArmLevel);
 
-                    FL.setPower(0.25);
-                    FR.setPower(0.25);
-                    BL.setPower(0.25);
-                    BR.setPower(0.25);
+                    AM.setPower(0.25);
 
-                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    while (AM.isBusy()) {
                     }
 
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    BL.setPower(0);
-                    BR.setPower(0);
+                    AM.setPower(0);
 
                     exitEncoders();resetEncoders();
+
                     armHeight = 1;
                 }
                 if (gamepad1.a) {
@@ -306,30 +259,19 @@ public class teleOpCode extends LinearOpMode {
 
                     startEncoders();
 
-                    FL.setTargetPosition(encoderArmHeight);
-                    FR.setTargetPosition(encoderArmHeight);
-                    BL.setTargetPosition(encoderArmHeight);
-                    BR.setTargetPosition(encoderArmHeight);
+                    AM.setTargetPosition(encoderArmLevel);
 
-                    FL.setPower(0.25);
-                    FR.setPower(0.25);
-                    BL.setPower(0.25);
-                    BR.setPower(0.25);
+                    AM.setPower(0.25);
 
-                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    while (AM.isBusy()) {
                     }
 
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    BL.setPower(0);
-                    BR.setPower(0);
+                    AM.setPower(0);
 
                     exitEncoders();resetEncoders();
+
                     armHeight = 2;
                 }
                 if (gamepad1.x) {
@@ -343,30 +285,19 @@ public class teleOpCode extends LinearOpMode {
 
                     startEncoders();
 
-                    FL.setTargetPosition(encoderArmHeight);
-                    FR.setTargetPosition(encoderArmHeight);
-                    BL.setTargetPosition(encoderArmHeight);
-                    BR.setTargetPosition(encoderArmHeight);
+                    AM.setTargetPosition(encoderArmLevel);
 
-                    FL.setPower(0.25);
-                    FR.setPower(0.25);
-                    BL.setPower(0.25);
-                    BR.setPower(0.25);
+                    AM.setPower(0.25);
 
-                    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+                    while (AM.isBusy()) {
                     }
 
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    BL.setPower(0);
-                    BR.setPower(0);
+                    AM.setPower(0);
 
                     exitEncoders();resetEncoders();
+
                     armHeight = 0;
                 }
             }
