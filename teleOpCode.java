@@ -14,26 +14,20 @@ public class teleOpCode extends LinearOpMode {
 
     // start encoders
     public void startEncoders() {
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LAM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        AM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // exit encoders
     public void exitEncoders() {
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LAM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        AM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // restart encoders
     public void resetEncoders() {
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LAM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        AM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     DcMotor FR, FL, BR, BL, AM, LAM;
@@ -49,8 +43,8 @@ public class teleOpCode extends LinearOpMode {
         FL = hardwareMap.dcMotor.get("Front Left");
         BR = hardwareMap.dcMotor.get("Back Right");
         BL = hardwareMap.dcMotor.get("Back Left");
-        AM = hardwareMap.dcMotor.get("arm motor");
-        LAM = hardwareMap.dcMotor.get("linear actuator motor");
+        AM = hardwareMap.dcMotor.get("Arm Lift");
+        LAM = hardwareMap.dcMotor.get("Linear Actuator");
 
         AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -62,7 +56,7 @@ public class teleOpCode extends LinearOpMode {
         FR.setDirection((DcMotor.Direction.REVERSE));
 
         // Sensors
-        subClawS = hardwareMap.colorSensor.get("Sub Claw Sensor");
+//        subClawS = hardwareMap.colorSensor.get("Sub Claw Sensor");
 
         int height = 0;
         int armHeight = 0;
@@ -111,7 +105,7 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // Sub claw stuff on blue
-                if (subClawS.blue() > 20) {
+              /*  if (subClawS.blue() > 20) {
                     LS.setPosition(45);
                     RS.setPosition(45);
 
@@ -131,7 +125,7 @@ public class teleOpCode extends LinearOpMode {
 
                     LS.setPosition(40);
                     RS.setPosition(40);
-                }
+                }*/
 
                 // Close/Open claw
                 if (gamepad1.b) {
@@ -152,7 +146,7 @@ public class teleOpCode extends LinearOpMode {
                         encoderArmLevel = (int) -(2 * 538);
                     }
 
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
                     LAM.setTargetPosition(encoderArmLevel);
 
@@ -165,7 +159,7 @@ public class teleOpCode extends LinearOpMode {
 
                     LAM.setPower(0);
 
-                    exitEncoders();resetEncoders();
+                    exitEncoders();
 
                     height = 0;
                 }
@@ -178,7 +172,7 @@ public class teleOpCode extends LinearOpMode {
                         encoderArmLevel = (int) -(1 * 538);
                     }
 
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
                     LAM.setTargetPosition(encoderArmLevel);
 
@@ -191,7 +185,7 @@ public class teleOpCode extends LinearOpMode {
 
                     LAM.setPower(0);
 
-                    exitEncoders();resetEncoders();
+                    exitEncoders();
 
                     height = 1;
                 }
@@ -204,7 +198,7 @@ public class teleOpCode extends LinearOpMode {
                         encoderArmLevel = (int) (0);
                     }
 
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
                     LAM.setTargetPosition(encoderArmLevel);
 
@@ -217,7 +211,7 @@ public class teleOpCode extends LinearOpMode {
 
                     LAM.setPower(0);
 
-                    exitEncoders();resetEncoders();
+                    exitEncoders();
 
                     height = 2;
                 }
@@ -231,7 +225,7 @@ public class teleOpCode extends LinearOpMode {
                         encoderArmHeight = (int) -(0.25 * 538);
                     }
 
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
                     AM.setTargetPosition(encoderArmLevel);
 
@@ -244,7 +238,7 @@ public class teleOpCode extends LinearOpMode {
 
                     AM.setPower(0);
 
-                    exitEncoders();resetEncoders();
+                    exitEncoders();
 
                     armHeight = 1;
                 }
@@ -257,7 +251,7 @@ public class teleOpCode extends LinearOpMode {
                         encoderArmHeight = 0;
                     }
 
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
                     AM.setTargetPosition(encoderArmLevel);
 
@@ -270,7 +264,7 @@ public class teleOpCode extends LinearOpMode {
 
                     AM.setPower(0);
 
-                    exitEncoders();resetEncoders();
+                    exitEncoders();
 
                     armHeight = 2;
                 }
@@ -283,7 +277,7 @@ public class teleOpCode extends LinearOpMode {
                         encoderArmHeight = (int) -(.75 * 538);
                     }
 
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
                     AM.setTargetPosition(encoderArmLevel);
 
@@ -296,7 +290,7 @@ public class teleOpCode extends LinearOpMode {
 
                     AM.setPower(0);
 
-                    exitEncoders();resetEncoders();
+                    exitEncoders();
 
                     armHeight = 0;
                 }
