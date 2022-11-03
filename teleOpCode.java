@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @TeleOp
 
-public class teleOpCode extends LinearOpMode {
+public class teleOpCodeLogan extends LinearOpMode {
 
     // start encoders
     public void startEncoders() {
@@ -229,7 +229,7 @@ public class teleOpCode extends LinearOpMode {
 
                     AM.setTargetPosition(encoderArmLevel);
 
-                    AM.setPower(0.25);
+                    AM.setPower(0.5);
 
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -255,7 +255,7 @@ public class teleOpCode extends LinearOpMode {
 
                     AM.setTargetPosition(encoderArmLevel);
 
-                    AM.setPower(0.25);
+                    AM.setPower(0.5);
 
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -297,4 +297,3 @@ public class teleOpCode extends LinearOpMode {
             }
         }
     }
-}
