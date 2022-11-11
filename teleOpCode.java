@@ -50,16 +50,14 @@ public class teleOpCode extends LinearOpMode {
         RS = hardwareMap.servo.get("Right Servo");
         CS = hardwareMap.servo.get("Claw Servo");
 
-        FR.setDirection((DcMotor.Direction.REVERSE));
-
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
 
+        int currentHeight = 1;
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
-                resetEncoders();
 
                 /**
                  * ALL UNDER GAMEPAD 1
@@ -69,6 +67,29 @@ public class teleOpCode extends LinearOpMode {
                 BR.setPower(gamepad1.right_stick_y * 0.5);
                 FL.setPower(gamepad1.left_stick_y * 0.5);
                 BL.setPower(gamepad1.left_stick_y * 0.5);
+
+                if (gamepad1.dpad_up) {
+                    AM.setPower(0.5);
+                    sleep(100);
+                    AM.setPower(0);
+                }
+                if (gamepad1.dpad_down) {
+                    AM.setPower(-0.7);
+                    sleep(100);
+                    AM.setPower(0);
+                }
+
+                if (gamepad1.right_bumper) {
+                    LAM.setPower(0.5);
+                    sleep(0);
+                    LAM.setPower(0);
+                }
+
+                if (gamepad1.left_bumper) {
+                    LAM.setPower(-0.5);
+                    sleep(0);
+                    LAM.setPower(0);
+                }
 
                 // Move to the left if the left trigger is pressed
                 if (gamepad1.right_trigger > 0) {
@@ -99,124 +120,166 @@ public class teleOpCode extends LinearOpMode {
                     }
                 }
 
-                // Set the arm and actuator to the STARTING position
-                if (gamepad1.dpad_right) {
-                    startEncoders();
-
-                    int armLevel = (int) (0);
-
-                    LAM.setTargetPosition(armLevel);
-                    LAM.setPower(0.25);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LAM.isBusy()) {
-                    }
-                    LAM.setPower(0);
-
-                    int armHeight = (int) (0.8 * 2786.2);
-
-                    AM.setTargetPosition(armHeight);
-                    AM.setPower(0.25);
-                    AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (AM.isBusy()) {
-                    }
-                    AM.setPower(0);
-                    exitEncoders();
-                }
-
                 // Set arm and actuator to LOWEST setting
                 if (gamepad1.a) {
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
-                    int armLevel = (int) (0);
+                    if (currentHeight == 2) {
+                        int armLevel = (int) (-4.9 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 3) {
+                        int armLevel = (int) (-9.9 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 4) {
+                        int armLevel = (int) (-14.9 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (-0.50 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else {
+                        int armLevel = (int) (0);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);*/
+                    }
 
-                    LAM.setTargetPosition(armLevel);
                     LAM.setPower(0.25);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy()) {
                     }
                     LAM.setPower(0);
 
-                    int armHeight = (int) (0);
-
-                    AM.setTargetPosition(armHeight);
-                    AM.setPower(0.25);
+                    /*AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);
+                    AM.setPower(0);*/
                     exitEncoders();
+                    currentHeight = 1;
                 }
 
                 // Set arm and actuator to MIDDLE LOWEST setting
                 if (gamepad1.x) {
-                    startEncoders();
-                    
-                    int armLevel = (int) (5 * 2786.2);
+                    if (currentHeight == 1) {
+                        int armLevel = (int) (5 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 3) {
+                        int armLevel = (int) (-5 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 4) {
+                        int armLevel = (int) (-10 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else {
+                        int armLevel = (int) (0);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);*/
+                    }
 
-                    LAM.setTargetPosition(armLevel);
                     LAM.setPower(0.25);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy()) {
                     }
                     LAM.setPower(0);
 
-                    int armHeight = (int) (0.25 * 2786.2);
-
-                    AM.setTargetPosition(armHeight);
-                    AM.setPower(0.25);
+                    /*AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);
+                    AM.setPower(0);*/
                     exitEncoders();
+                    currentHeight = 2;
                 }
 
                 // Set arm and actuator to MIDDLE HIGHEST setting
                 if (gamepad1.b) {
-                    startEncoders();
-                    
-                    int armLevel = (int) (10 * 2786.2);
+                    resetEncoders();startEncoders();
 
-                    LAM.setTargetPosition(armLevel);
+                    if (currentHeight == 1) {
+                        int armLevel = (int) (10 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 2) {
+                        int armLevel = (int) (5 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 4) {
+                        int armLevel = (int) (-5 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else {
+                        int armLevel = (int) (0);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);*/
+                    }
+
                     LAM.setPower(0.25);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy()) {
                     }
                     LAM.setPower(0);
 
-                    int armHeight = (int) (0.25 * 2786.2);
-
-                    AM.setTargetPosition(armHeight);
-                    AM.setPower(0.25);
+                    /*AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);
+                    AM.setPower(0);*/
                     exitEncoders();
+                    currentHeight = 3;
                 }
 
                 // Set arm and actuator to HIGHEST setting
                 if (gamepad1.y) {
-                    startEncoders();
+                    resetEncoders();startEncoders();
 
-                    int armLevel = (int) (15 * 2786.2);
+                    if (currentHeight == 1) {
+                        int armLevel = (int) (15 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0.5 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 2) {
+                        int armLevel = (int) (10 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else if (currentHeight == 3) {
+                        int armLevel = (int) (5 * 145.1);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);*/
+                    } else {
+                        int armLevel = (int) (0);
+                        LAM.setTargetPosition(armLevel);
+                        /*int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);*/
+                    }
 
-                    LAM.setTargetPosition(armLevel);
                     LAM.setPower(0.25);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy()) {
                     }
                     LAM.setPower(0);
 
-                    int armHeight = (int) (0.50 * 2786.2);
-
-                    AM.setTargetPosition(armHeight);
-                    AM.setPower(0.25);
+                    /*AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);
+                    AM.setPower(0);*/
                     exitEncoders();
+                    currentHeight = 4;
                 }
 
                 /**
