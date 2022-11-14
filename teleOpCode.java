@@ -31,7 +31,7 @@ public class teleOpCode extends LinearOpMode {
     }
 
     DcMotor FR, FL, BR, BL, AM, LAM;
-    Servo LS, RS, CS;
+    Servo CS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,8 +46,6 @@ public class teleOpCode extends LinearOpMode {
         AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        LS = hardwareMap.servo.get("Left Servo");
-        RS = hardwareMap.servo.get("Right Servo");
         CS = hardwareMap.servo.get("Claw Servo");
 
         telemetry.addData(">", "Press Play to start op mode");
@@ -127,23 +125,23 @@ public class teleOpCode extends LinearOpMode {
                     if (currentHeight == 2) {
                         int armLevel = (int) (-4.9 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 3) {
                         int armLevel = (int) (-9.9 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 4) {
                         int armLevel = (int) (-14.9 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (-0.50 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (-0.50 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else {
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);
                     }
 
                     LAM.setPower(0.25);
@@ -152,37 +150,39 @@ public class teleOpCode extends LinearOpMode {
                     }
                     LAM.setPower(0);
 
-                    /*AM.setPower(0.25);
+                    AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);*/
+                    AM.setPower(0);
                     exitEncoders();
                     currentHeight = 1;
                 }
 
                 // Set arm and actuator to MIDDLE LOWEST setting
                 if (gamepad1.x) {
+                    resetEncoders();startEncoders();
+
                     if (currentHeight == 1) {
                         int armLevel = (int) (5 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 3) {
                         int armLevel = (int) (-5 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 4) {
                         int armLevel = (int) (-10 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else {
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);
                     }
 
                     LAM.setPower(0.25);
@@ -191,11 +191,11 @@ public class teleOpCode extends LinearOpMode {
                     }
                     LAM.setPower(0);
 
-                    /*AM.setPower(0.25);
+                    AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);*/
+                    AM.setPower(0);
                     exitEncoders();
                     currentHeight = 2;
                 }
@@ -207,23 +207,23 @@ public class teleOpCode extends LinearOpMode {
                     if (currentHeight == 1) {
                         int armLevel = (int) (10 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 2) {
                         int armLevel = (int) (5 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 4) {
                         int armLevel = (int) (-5 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (-0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else {
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);
                     }
 
                     LAM.setPower(0.25);
@@ -232,11 +232,11 @@ public class teleOpCode extends LinearOpMode {
                     }
                     LAM.setPower(0);
 
-                    /*AM.setPower(0.25);
+                    AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);*/
+                    AM.setPower(0);
                     exitEncoders();
                     currentHeight = 3;
                 }
@@ -248,23 +248,23 @@ public class teleOpCode extends LinearOpMode {
                     if (currentHeight == 1) {
                         int armLevel = (int) (15 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0.5 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0.5 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 2) {
                         int armLevel = (int) (10 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 3) {
                         int armLevel = (int) (5 * 145.1);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0.25 * 3895.9);
+                        AM.setTargetPosition(armHeight);
                     } else {
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
-                        /*int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);*/
+                        int armHeight = (int) (0);
+                        AM.setTargetPosition(armHeight);
                     }
 
                     LAM.setPower(0.25);
@@ -273,11 +273,11 @@ public class teleOpCode extends LinearOpMode {
                     }
                     LAM.setPower(0);
 
-                    /*AM.setPower(0.25);
+                    AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
-                    AM.setPower(0);*/
+                    AM.setPower(0);
                     exitEncoders();
                     currentHeight = 4;
                 }
