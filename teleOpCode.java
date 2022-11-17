@@ -11,51 +11,55 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 @TeleOp
 
 public class teleOpCode extends LinearOpMode {
+    /**
+     * ALL THE VARIABLES
+     */
 
-    // start encoders
+    DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
+    Servo CS; // All of the servos
+    final double closeClaw = 0.00; // Closed position for the claw servo
+    final double openClaw = 1.00; // Opened position for the claw servo
+    int currentHeight = 1; // This variable is for the preset heights of the arm
+    double speed = 0.5; // This is the speed at which the wheels will go
+
+    /**
+     * ALL THE METHODS
+     */
+
+    // This method will start encoders
     public void startEncoders() {
         LAM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         AM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    // exit encoders
+    // This method will exit encoders
     public void exitEncoders() {
         LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    // restart encoders
+    // This method will restart encoders
     public void resetEncoders() {
         LAM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         AM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    DcMotor FR, FL, BR, BL, AM, LAM;
-    Servo CS;
-
     @Override
     public void runOpMode() throws InterruptedException {
-        // Motors and servos
+        // Assigning all of the servos and motors
         FR = hardwareMap.dcMotor.get("Front Right");
         FL = hardwareMap.dcMotor.get("Front Left");
         BR = hardwareMap.dcMotor.get("Back Right");
         BL = hardwareMap.dcMotor.get("Back Left");
         AM = hardwareMap.dcMotor.get("Arm Lift");
         LAM = hardwareMap.dcMotor.get("Linear Actuator");
-
-        BR.setDirection((DcMotor.Direction.REVERSE));
-
-        AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         CS = hardwareMap.servo.get("Claw Servo");
 
-        telemetry.addData(">", "Press Play to start op mode");
-        telemetry.update();
-        waitForStart();
+        BR.setDirection((DcMotor.Direction.REVERSE)); // This will reverse the back right wheel (idk why but only this one needs to be reversed)
 
-        int currentHeight = 1;
-        double speed = 0.5;
+        telemetry.addData(">", "Press Play to start op mode"); // Will add stuff to the driver hub screen
+        telemetry.update(); // Will update the driver hub screen so that the above will appear
+        waitForStart(); // When the start button is pressed
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -63,36 +67,13 @@ public class teleOpCode extends LinearOpMode {
                 /**
                  * ALL UNDER GAMEPAD 1
                  */
-                // MOVE ROBOT
+                // Basic robot moving controls
                 FR.setPower(gamepad1.right_stick_y * speed);
                 BR.setPower(gamepad1.right_stick_y * speed);
                 FL.setPower(gamepad1.left_stick_y * speed);
                 BL.setPower(gamepad1.left_stick_y * speed);
 
-                if (gamepad1.dpad_up) {
-                    AM.setPower(0.5);
-                    sleep(100);
-                    AM.setPower(0);
-                }
-                if (gamepad1.dpad_down) {
-                    AM.setPower(-0.7);
-                    sleep(100);
-                    AM.setPower(0);
-                }
-
-                if (gamepad1.right_bumper) {
-                    LAM.setPower(0.5);
-                    sleep(0);
-                    LAM.setPower(0);
-                }
-
-                if (gamepad1.left_bumper) {
-                    LAM.setPower(-0.5);
-                    sleep(0);
-                    LAM.setPower(0);
-                }
-
-                // Move to the left if the left trigger is pressed
+                // This will strafe to the left
                 if (gamepad1.right_trigger > 0) {
                     FR.setPower(speed);
                     BL.setPower(speed);
@@ -105,7 +86,7 @@ public class teleOpCode extends LinearOpMode {
                     BL.setPower(0);
                 }
 
-                // Move to the right if the right trigger is pressed
+                // This will strafe to the right
                 if (gamepad1.left_trigger > 0) {
                     FR.setPower(-speed);
                     BL.setPower(-speed);
@@ -118,37 +99,81 @@ public class teleOpCode extends LinearOpMode {
                     BL.setPower(0);
                 }
 
+                // This will change the above between slo-mo and normal speed
+                if (gamepad1.dpad_left) {
+                    if (speed == 0.50) { // If it is at default speed
+                        speed = 0.15; // Go to slo-mo
+                    } else if (speed == 0.15) { // If at slo-mo
+                        speed = 0.50; // go to default speed
+                    }
+                }
+
+                // This allows you to manually lift the arm
+                if (gamepad1.dpad_up) {
+                    AM.setPower(0.5); // Set power
+                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    AM.setPower(0); // Turn off if it isn't
+                }
+                // This allows you to manually lower the arm
+                if (gamepad1.dpad_down) {
+                    AM.setPower(-0.7); // Set power
+                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    AM.setPower(0); // Turn off if it isn't
+                }
+
+                // This allows you to manually lift the linear actuator
+                if (gamepad1.right_bumper) {
+                    LAM.setPower(0.5); // Set power
+                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    LAM.setPower(0); // Turn off if it isn't
+                }
+
+                if (gamepad1.left_bumper) {
+                    LAM.setPower(-0.5); // Set power
+                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    LAM.setPower(0); // Turn off if it isn't
+                }
+
                 // Set arm and actuator to LOWEST setting
                 if (gamepad1.a) {
-                    resetEncoders();startEncoders();
+                    resetEncoders();startEncoders(); // resets then starts encoders
 
-                    if (currentHeight == 2) {
-                        int armLevel = (int) (-14.8 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 3) {
+                    if (currentHeight == 2) { // If it is at preset "x"
+
+                        int armLevel = (int) (-14.8 * 145.1); // The distance needed to get down from "x"
+                        LAM.setTargetPosition(armLevel); // Sets the target
+
+                        int armHeight = (int) (-0.25 * 3895.9); // The distance needed to get down from "x"
+                        AM.setTargetPosition(armHeight); // Sets the target
+
+                    } else if (currentHeight == 3) { // If it is at preset "b"
+
                         int armLevel = (int) (-19.8 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (-0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 4) {
+
+                    } else if (currentHeight == 4) { // If it is at preset "y"
+
                         int armLevel = (int) (-24.8 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (-0.50 * 3895.9);
                         AM.setTargetPosition(armHeight);
-                    } else {
+
+                    } else { // Currently at "a"
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0);
                         AM.setTargetPosition(armHeight);
                     }
 
-                    LAM.setPower(0.25);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LAM.isBusy()) {
+                    LAM.setPower(-0.25);
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
+                    while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
                     }
-                    LAM.setPower(0);
+                    LAM.setPower(0); // Turns off once target reached
 
                     AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -157,32 +182,49 @@ public class teleOpCode extends LinearOpMode {
                     AM.setPower(0);
                     exitEncoders();
 
+                    /*
+                    This is needed only for the "a" button, you may have noticed that the
+                    calculations for the linear actuator are 0.2 off. This is because if it goes
+                    all the way it will run into something and it will never reach the "target"
+                    (idk exactly know why) but if it goes *mostly* and then the motor turns on for
+                    0.3 seconds it should reach it perfectly fine with no errors
+                     */
                     LAM.setPower(0.25);
                     sleep(300);
                     LAM.setPower(0);
-                    currentHeight = 1;
+
+                    currentHeight = 1; // Tells the code that the current height is now 1
                 }
 
                 // Set arm and actuator to MIDDLE LOWEST setting
                 if (gamepad1.x) {
                     resetEncoders();startEncoders();
 
-                    if (currentHeight == 1) {
-                        int armLevel = (int) (15 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 3) {
+                    if (currentHeight == 1) { // If it is at preset "a"
+
+                        int armLevel = (int) (15 * 145.1);// The distance needed to go up from "a"
+                        LAM.setTargetPosition(armLevel); // Sets the target
+
+                        int armHeight = (int) (0.25 * 3895.9); // The distance needed to go up from "a"
+                        AM.setTargetPosition(armHeight); // Sets the target
+
+                    } else if (currentHeight == 3) { // If it is at preset "b"
+
                         int armLevel = (int) (-5 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (0);
                         AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 4) {
+
+                    } else if (currentHeight == 4) { // If it is at preset "y"
+
                         int armLevel = (int) (-10 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (-0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
-                    } else {
+
+                    } else { // Currently at "x"
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0);
@@ -190,40 +232,50 @@ public class teleOpCode extends LinearOpMode {
                     }
 
                     LAM.setPower(0.25);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LAM.isBusy()) {
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
+                    while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
                     }
-                    LAM.setPower(0);
+                    LAM.setPower(0); // Turns off once target reached
 
                     AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
                     AM.setPower(0);
+
                     exitEncoders();
-                    currentHeight = 2;
+                    currentHeight = 2; // Tells the code that the current height is now 2
                 }
 
                 // Set arm and actuator to MIDDLE HIGHEST setting
                 if (gamepad1.b) {
                     resetEncoders();startEncoders();
 
-                    if (currentHeight == 1) {
-                        int armLevel = (int) (20 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 2) {
+                    if (currentHeight == 1) { // If it is at preset "a"
+
+                        int armLevel = (int) (20 * 145.1); // The distance needed to go up from "a"
+                        LAM.setTargetPosition(armLevel); // Sets the target
+
+                        int armHeight = (int) (0.25 * 3895.9); // The distance needed to go up from "a"
+                        AM.setTargetPosition(armHeight); // Sets the target
+
+                    } else if (currentHeight == 2) { // If it is at preset "x"
+
                         int armLevel = (int) (5 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (0);
                         AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 4) {
+
+                    } else if (currentHeight == 4) { // If it is at preset "y"
+
                         int armLevel = (int) (-5 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (-0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
-                    } else {
+
+                    } else { // Currently at "b"
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0);
@@ -231,18 +283,19 @@ public class teleOpCode extends LinearOpMode {
                     }
 
                     LAM.setPower(0.25);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LAM.isBusy()) {
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
+                    while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
                     }
-                    LAM.setPower(0);
+                    LAM.setPower(0); // Turns off once target reached
 
                     AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
                     AM.setPower(0);
+
                     exitEncoders();
-                    currentHeight = 3;
+                    currentHeight = 3; // Tells the code that the current height is now 3
                 }
 
                 // Set arm and actuator to HIGHEST setting
@@ -250,21 +303,30 @@ public class teleOpCode extends LinearOpMode {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) {
-                        int armLevel = (int) (25 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0.5 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 2) {
+                        // If it is at preset "a"
+                        int armLevel = (int) (25 * 145.1); // The distance needed to go up from "a"
+                        LAM.setTargetPosition(armLevel); // Sets the target
+
+                        int armHeight = (int) (0.5 * 3895.9); // The distance needed to go up from "a"
+                        AM.setTargetPosition(armHeight); // Sets the target
+
+                    } else if (currentHeight == 2) { // If it is at preset "x"
+
                         int armLevel = (int) (10 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
-                    } else if (currentHeight == 3) {
+
+                    } else if (currentHeight == 3) { // If it is at preset "b"
+
                         int armLevel = (int) (5 * 145.1);
                         LAM.setTargetPosition(armLevel);
+
                         int armHeight = (int) (0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
-                    } else {
+
+                    } else { // Currently at "y"
                         int armLevel = (int) (0);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0);
@@ -272,41 +334,31 @@ public class teleOpCode extends LinearOpMode {
                     }
 
                     LAM.setPower(0.25);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (LAM.isBusy()) {
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
+                    while (LAM.isBusy()){// This is like a sleep method but it last as long as needed to get to the encoder target
                     }
-                    LAM.setPower(0);
+                    LAM.setPower(0); // Turns off once target reached
 
                     AM.setPower(0.25);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (AM.isBusy()) {
                     }
                     AM.setPower(0);
-                    exitEncoders();
-                    currentHeight = 4;
-                }
 
-                if (gamepad1.dpad_left) {
-                    if (speed == 0.50) {
-                        speed = 0.15;
-                    } else if (speed == 0.15) {
-                        speed = 0.5;
-                    }
+                    exitEncoders();
+                    currentHeight = 4; // Tells the code that the current height is now 4
                 }
 
                 /**
                  * ALL UNDER GAMEPAD 2
                  */
 
+                // self explanatory
                 if (gamepad2.b) {
-                    CS.setPosition(0.02);
+                    CS.setPosition(closeClaw);
                 }
                 if (gamepad2.x) {
-                    CS.setPosition(1);
-                }
-                if (gamepad2.y) {
-                    CS.setPosition(0.5);
-
+                    CS.setPosition(openClaw);
                 }
             }
         }
