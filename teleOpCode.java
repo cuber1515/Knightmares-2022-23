@@ -43,6 +43,8 @@ public class teleOpCode extends LinearOpMode {
         AM = hardwareMap.dcMotor.get("Arm Lift");
         LAM = hardwareMap.dcMotor.get("Linear Actuator");
 
+        BR.setDirection((DcMotor.Direction.REVERSE));
+
         AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -53,6 +55,7 @@ public class teleOpCode extends LinearOpMode {
         waitForStart();
 
         int currentHeight = 1;
+        double speed = 0.5;
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -61,10 +64,10 @@ public class teleOpCode extends LinearOpMode {
                  * ALL UNDER GAMEPAD 1
                  */
                 // MOVE ROBOT
-                FR.setPower(gamepad1.right_stick_y * 0.5);
-                BR.setPower(gamepad1.right_stick_y * 0.5);
-                FL.setPower(gamepad1.left_stick_y * 0.5);
-                BL.setPower(gamepad1.left_stick_y * 0.5);
+                FR.setPower(gamepad1.right_stick_y * speed);
+                BR.setPower(gamepad1.right_stick_y * speed);
+                FL.setPower(gamepad1.left_stick_y * speed);
+                BL.setPower(gamepad1.left_stick_y * speed);
 
                 if (gamepad1.dpad_up) {
                     AM.setPower(0.5);
@@ -91,31 +94,28 @@ public class teleOpCode extends LinearOpMode {
 
                 // Move to the left if the left trigger is pressed
                 if (gamepad1.right_trigger > 0) {
-                    FR.setPower(gamepad1.left_trigger * 0.5);
-                    BL.setPower(gamepad1.left_trigger * .5);
-                    FL.setPower(-gamepad1.left_trigger * .5);
-                    BR.setPower(-gamepad1.left_trigger * .5);
-                    if (gamepad1.left_trigger == 0) {
-                        FR.setPower(0);
-                        FL.setPower(0);
-                        BR.setPower(0);
-                        BL.setPower(0);
-                    }
+                    FR.setPower(speed);
+                    BL.setPower(speed);
+                    FL.setPower(-speed);
+                    BR.setPower(-speed);
+                    sleep(100);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
                 }
 
                 // Move to the right if the right trigger is pressed
                 if (gamepad1.left_trigger > 0) {
-                    FR.setPower(-gamepad1.right_trigger * 0.5);
-                    BL.setPower(-gamepad1.right_trigger * 0.5);
-                    FL.setPower(gamepad1.right_trigger * 0.5);
-                    BR.setPower(gamepad1.right_trigger * 0.5);
-
-                    if (gamepad1.right_trigger == 0) {
-                        FR.setPower(0);
-                        FL.setPower(0);
-                        BR.setPower(0);
-                        BL.setPower(0);
-                    }
+                    FR.setPower(-speed);
+                    BL.setPower(-speed);
+                    FL.setPower(speed);
+                    BR.setPower(speed);
+                    sleep(100);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
                 }
 
                 // Set arm and actuator to LOWEST setting
@@ -123,17 +123,17 @@ public class teleOpCode extends LinearOpMode {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 2) {
-                        int armLevel = (int) (-4.9 * 145.1);
+                        int armLevel = (int) (-14.8 * 145.1);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (-0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 3) {
-                        int armLevel = (int) (-9.9 * 145.1);
+                        int armLevel = (int) (-19.8 * 145.1);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (-0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
                     } else if (currentHeight == 4) {
-                        int armLevel = (int) (-14.9 * 145.1);
+                        int armLevel = (int) (-24.8 * 145.1);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (-0.50 * 3895.9);
                         AM.setTargetPosition(armHeight);
@@ -156,6 +156,10 @@ public class teleOpCode extends LinearOpMode {
                     }
                     AM.setPower(0);
                     exitEncoders();
+
+                    LAM.setPower(0.25);
+                    sleep(300);
+                    LAM.setPower(0);
                     currentHeight = 1;
                 }
 
@@ -164,7 +168,7 @@ public class teleOpCode extends LinearOpMode {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) {
-                        int armLevel = (int) (5 * 145.1);
+                        int armLevel = (int) (15 * 145.1);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
@@ -205,7 +209,7 @@ public class teleOpCode extends LinearOpMode {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) {
-                        int armLevel = (int) (10 * 145.1);
+                        int armLevel = (int) (20 * 145.1);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0.25 * 3895.9);
                         AM.setTargetPosition(armHeight);
@@ -246,7 +250,7 @@ public class teleOpCode extends LinearOpMode {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) {
-                        int armLevel = (int) (15 * 145.1);
+                        int armLevel = (int) (25 * 145.1);
                         LAM.setTargetPosition(armLevel);
                         int armHeight = (int) (0.5 * 3895.9);
                         AM.setTargetPosition(armHeight);
@@ -280,6 +284,14 @@ public class teleOpCode extends LinearOpMode {
                     AM.setPower(0);
                     exitEncoders();
                     currentHeight = 4;
+                }
+
+                if (gamepad1.dpad_left) {
+                    if (speed == 0.50) {
+                        speed = 0.15;
+                    } else if (speed == 0.15) {
+                        speed = 0.5;
+                    }
                 }
 
                 /**
