@@ -17,8 +17,8 @@ public class teleOpCode extends LinearOpMode {
 
     DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
     Servo CS; // All of the servos
-    final double closeClaw = 0.00; // Closed position for the claw servo
-    final double openClaw = 1.00; // Opened position for the claw servo
+    final double closeClaw = 0.1; // Closed position for the claw servo
+    final double openClaw = 0.7; // Opened position for the claw servo
     int currentHeight = 1; // This variable is for the preset heights of the arm
     double speed = 0.5; // This is the speed at which the wheels will go
 
@@ -108,34 +108,38 @@ public class teleOpCode extends LinearOpMode {
                     }
                 }
 
+                /**
+                 * ALL UNDER GAMEPAD 2
+                 */
+
                 // This allows you to manually lift the arm
-                if (gamepad1.dpad_up) {
+                if (gamepad2.dpad_up) {
                     AM.setPower(0.5); // Set power
                     sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
                     AM.setPower(0); // Turn off if it isn't
                 }
                 // This allows you to manually lower the arm
-                if (gamepad1.dpad_down) {
+                if (gamepad2.dpad_down) {
                     AM.setPower(-0.7); // Set power
                     sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
                     AM.setPower(0); // Turn off if it isn't
                 }
 
                 // This allows you to manually lift the linear actuator
-                if (gamepad1.right_bumper) {
+                if (gamepad2.right_bumper) {
                     LAM.setPower(0.5); // Set power
                     sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
                     LAM.setPower(0); // Turn off if it isn't
                 }
 
-                if (gamepad1.left_bumper) {
+                if (gamepad2.left_bumper) {
                     LAM.setPower(-0.5); // Set power
                     sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
                     LAM.setPower(0); // Turn off if it isn't
                 }
 
                 // Set arm and actuator to LOWEST setting
-                if (gamepad1.a) {
+                if (gamepad2.a) {
                     resetEncoders();startEncoders(); // resets then starts encoders
 
                     if (currentHeight == 2) { // If it is at preset "x"
@@ -197,7 +201,7 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // Set arm and actuator to MIDDLE LOWEST setting
-                if (gamepad1.x) {
+                if (gamepad2.x) {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) { // If it is at preset "a"
@@ -248,7 +252,7 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // Set arm and actuator to MIDDLE HIGHEST setting
-                if (gamepad1.b) {
+                if (gamepad2.b) {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) { // If it is at preset "a"
@@ -299,7 +303,7 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // Set arm and actuator to HIGHEST setting
-                if (gamepad1.y) {
+                if (gamepad2.y) {
                     resetEncoders();startEncoders();
 
                     if (currentHeight == 1) {
@@ -348,10 +352,6 @@ public class teleOpCode extends LinearOpMode {
                     exitEncoders();
                     currentHeight = 4; // Tells the code that the current height is now 4
                 }
-
-                /**
-                 * ALL UNDER GAMEPAD 2
-                 */
 
                 // self explanatory
                 if (gamepad2.b) {
