@@ -17,8 +17,8 @@ public class teleOpCode extends LinearOpMode {
 
     DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
     Servo CS; // All of the servos
-    final double closeClaw = 0.1; // Closed position for the claw servo
-    final double openClaw = 0.7; // Opened position for the claw servo
+    final double closeClaw = 0.20; // Closed position for the claw servo
+    final double openClaw = 0.70; // Opened position for the claw servo
     int currentHeight = 1; // This variable is for the preset heights of the arm
     double speed = 0.5; // This is the speed at which the wheels will go
 
@@ -100,7 +100,7 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // This will change the above between slo-mo and normal speed
-                if (gamepad1.dpad_left) {
+                if (gamepad1.a) {
                     if (speed == 0.50) { // If it is at default speed
                         speed = 0.15; // Go to slo-mo
                     } else if (speed == 0.15) { // If at slo-mo
@@ -354,10 +354,10 @@ public class teleOpCode extends LinearOpMode {
                 }
 
                 // self explanatory
-                if (gamepad2.b) {
+                if (gamepad2.left_trigger > 0) {
                     CS.setPosition(closeClaw);
                 }
-                if (gamepad2.x) {
+                if (gamepad2.right_trigger > 0) {
                     CS.setPosition(openClaw);
                 }
             }
