@@ -17,8 +17,6 @@ public class teleOpCode extends LinearOpMode {
 
     DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
     Servo CS; // All of the servos
-    final double closeClaw = 0.20; // Closed position for the claw servo
-    final double openClaw = 0.70; // Opened position for the claw servo
     int currentHeight = 1; // This variable is for the preset heights of the arm
     double speed = 0.5; // This is the speed at which the wheels will go
 
@@ -127,13 +125,13 @@ public class teleOpCode extends LinearOpMode {
 
                 // This allows you to manually lift the linear actuator
                 if (gamepad2.right_bumper) {
-                    LAM.setPower(0.5); // Set power
+                    LAM.setPower(1); // Set power
                     sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
                     LAM.setPower(0); // Turn off if it isn't
                 }
 
                 if (gamepad2.left_bumper) {
-                    LAM.setPower(-0.5); // Set power
+                    LAM.setPower(-1); // Set power
                     sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
                     LAM.setPower(0); // Turn off if it isn't
                 }
@@ -173,7 +171,7 @@ public class teleOpCode extends LinearOpMode {
                         AM.setTargetPosition(armHeight);
                     }
 
-                    LAM.setPower(-0.25);
+                    LAM.setPower(-1);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
                     while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
                     }
@@ -193,7 +191,7 @@ public class teleOpCode extends LinearOpMode {
                     (idk exactly know why) but if it goes *mostly* and then the motor turns on for
                     0.3 seconds it should reach it perfectly fine with no errors
                      */
-                    LAM.setPower(0.25);
+                    LAM.setPower(-0.25);
                     sleep(300);
                     LAM.setPower(0);
 
@@ -235,7 +233,7 @@ public class teleOpCode extends LinearOpMode {
                         AM.setTargetPosition(armHeight);
                     }
 
-                    LAM.setPower(0.25);
+                    LAM.setPower(1);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
                     while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
                     }
@@ -286,7 +284,7 @@ public class teleOpCode extends LinearOpMode {
                         AM.setTargetPosition(armHeight);
                     }
 
-                    LAM.setPower(0.25);
+                    LAM.setPower(1);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
                     while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
                     }
@@ -337,7 +335,7 @@ public class teleOpCode extends LinearOpMode {
                         AM.setTargetPosition(armHeight);
                     }
 
-                    LAM.setPower(0.25);
+                    LAM.setPower(1);
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
                     while (LAM.isBusy()){// This is like a sleep method but it last as long as needed to get to the encoder target
                     }
@@ -355,10 +353,10 @@ public class teleOpCode extends LinearOpMode {
 
                 // self explanatory
                 if (gamepad2.left_trigger > 0) {
-                    CS.setPosition(closeClaw);
+                    CS.setPosition(0.20); // closeClaw
                 }
                 if (gamepad2.right_trigger > 0) {
-                    CS.setPosition(openClaw);
+                    CS.setPosition(0.55); // openClaw
                 }
             }
         }
