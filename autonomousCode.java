@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
-@Disabled
+
 public class autonomousCode extends LinearOpMode{
 
     // start encoders
@@ -90,6 +90,7 @@ public class autonomousCode extends LinearOpMode{
         BL = hardwareMap.dcMotor.get("Back Left");
         AM = hardwareMap.dcMotor.get("Arm Lift");
         LAM = hardwareMap.dcMotor.get("Linear Actuator");
+        BR.setDirection((DcMotor.Direction.REVERSE)); // This will reverse the back right wheel (idk why but only this one needs to be reversed)
 
         AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -98,24 +99,46 @@ public class autonomousCode extends LinearOpMode{
 
         waitForStart();
 
-        resetEncoders();startEncoders();
+        /*startEncoders();
+        resetEncoders();
         double circumference = 3.14 * 4;
         double rotationsNeeded = 24 / circumference;
-        int encoderDrivingTarget = (int) (rotationsNeeded * 537.7);
+        int encoderDrivingTarget = (int) (-rotationsNeeded * 537.7);
 
-        driveEncoders(0.5, encoderDrivingTarget);
-        exitEncoders();
+        FR.setTargetPosition(encoderDrivingTarget);
+        FL.setTargetPosition(encoderDrivingTarget);
+        BR.setTargetPosition(encoderDrivingTarget);
+        BL.setTargetPosition(encoderDrivingTarget);
 
-        resetEncodersA();startEncodersA();
-        int armRotation = (int) (0.75 * 3895.9);
+        FR.setPower(0.5);
+        FL.setPower(0.5);
+        BR.setPower(0.5);
+        BL.setPower(0.5);
 
-        AM.setTargetPosition(armRotation);
-        AM.setPower(0.75);
-        while (AM.isBusy()) {
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
         }
-        AM.setPower(0);
 
+        FR.setPower(0);
+        FL.setPower(0);
+        BR.setPower(0);
+        BL.setPower(0);
 
+        exitEncoders();*/
 
+        FR.setPower(-0.5);
+        FL.setPower(-0.5);
+        BR.setPower(-0.5);
+        BL.setPower(-0.5);
+        sleep(1000);
+        FR.setPower(0);
+        FL.setPower(0);
+        BR.setPower(0);
+        BL.setPower(0);
+        sleep(100);
     }
 }
