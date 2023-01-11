@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@TeleOp
-
+@TeleOp(name="teleOp")
+//@Disabled
 public class teleOpCode extends LinearOpMode {
     /**
      * ALL THE VARIABLES
@@ -54,11 +55,14 @@ public class teleOpCode extends LinearOpMode {
         CS = hardwareMap.servo.get("Claw Servo");
 
         BR.setDirection((DcMotor.Direction.REVERSE)); // This will reverse the back right wheel (idk why but only this one needs to be reversed)
+        FR.setDirection((DcMotor.Direction.REVERSE)); // This will reverse the front right wheel (idk why but only this one needs to be reversed)
 
         telemetry.addData(">", "Press Play to start op mode"); // Will add stuff to the driver hub screen
         telemetry.update(); // Will update the driver hub screen so that the above will appear
         waitForStart(); // When the start button is pressed
 
+        resetEncoders();
+        exitEncoders();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -113,250 +117,108 @@ public class teleOpCode extends LinearOpMode {
                 // This allows you to manually lift the arm
                 if (gamepad2.dpad_up) {
                     AM.setPower(0.5); // Set power
-                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
+                } else {
                     AM.setPower(0); // Turn off if it isn't
                 }
+
                 // This allows you to manually lower the arm
                 if (gamepad2.dpad_down) {
-                    AM.setPower(-0.7); // Set power
-                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    AM.setPower(-0.5); // Set power
+                    sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
+                } else {
                     AM.setPower(0); // Turn off if it isn't
                 }
 
                 // This allows you to manually lift the linear actuator
                 if (gamepad2.right_bumper) {
-                    LAM.setPower(1); // Set power
-                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    LAM.setPower(0.6); // Set power
+                    sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
+                } else {
                     LAM.setPower(0); // Turn off if it isn't
                 }
 
                 if (gamepad2.left_bumper) {
-                    LAM.setPower(-1); // Set power
-                    sleep(100); // Wait a 100 milliseconds and check if button is still being pressed
+                    LAM.setPower(-0.6); // Set power
+                    sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
+                } else {
                     LAM.setPower(0); // Turn off if it isn't
                 }
 
-                // Set arm and actuator to LOWEST setting
                 if (gamepad2.a) {
-                    resetEncoders();startEncoders(); // resets then starts encoders
+                    startEncoders();
+                    LAM.setTargetPosition(0);
+                    LAM.setPower(1);
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    if (currentHeight == 2) { // If it is at preset "x"
-
-                        int armLevel = (int) (-14.8 * 145.1); // The distance needed to get down from "x"
-                        LAM.setTargetPosition(armLevel); // Sets the target
-
-                        int armHeight = (int) (-0.25 * 3895.9); // The distance needed to get down from "x"
-                        AM.setTargetPosition(armHeight); // Sets the target
-
-                    } else if (currentHeight == 3) { // If it is at preset "b"
-
-                        int armLevel = (int) (-19.8 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-
-                    } else if (currentHeight == 4) { // If it is at preset "y"
-
-                        int armLevel = (int) (-24.8 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (-0.50 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-
-                    } else { // Currently at "a"
-                        int armLevel = (int) (0);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);
-                    }
-
-                    LAM.setPower(-1);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
-                    while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
-                    }
-                    LAM.setPower(0); // Turns off once target reached
-
-                    AM.setPower(0.25);
+                    AM.setTargetPosition((int) (0));
+                    AM.setPower(0.50);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (AM.isBusy()) {
+                    while (LAM.isBusy() || AM.isBusy()){
                     }
-                    AM.setPower(0);
-                    exitEncoders();
-
-                    /*
-                    This is needed only for the "a" button, you may have noticed that the
-                    calculations for the linear actuator are 0.2 off. This is because if it goes
-                    all the way it will run into something and it will never reach the "target"
-                    (idk exactly know why) but if it goes *mostly* and then the motor turns on for
-                    0.3 seconds it should reach it perfectly fine with no errors
-                     */
-                    LAM.setPower(-0.25);
-                    sleep(300);
                     LAM.setPower(0);
-
-                    currentHeight = 1; // Tells the code that the current height is now 1
+                    AM.setPower(0);
+                    exitEncoders();
                 }
 
-                // Set arm and actuator to MIDDLE LOWEST setting
                 if (gamepad2.x) {
-                    resetEncoders();startEncoders();
-
-                    if (currentHeight == 1) { // If it is at preset "a"
-
-                        int armLevel = (int) (15 * 145.1);// The distance needed to go up from "a"
-                        LAM.setTargetPosition(armLevel); // Sets the target
-
-                        int armHeight = (int) (0.25 * 3895.9); // The distance needed to go up from "a"
-                        AM.setTargetPosition(armHeight); // Sets the target
-
-                    } else if (currentHeight == 3) { // If it is at preset "b"
-
-                        int armLevel = (int) (-5 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);
-
-                    } else if (currentHeight == 4) { // If it is at preset "y"
-
-                        int armLevel = (int) (-10 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-
-                    } else { // Currently at "x"
-                        int armLevel = (int) (0);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);
-                    }
-
+                    startEncoders();
+                    LAM.setTargetPosition(0);
                     LAM.setPower(1);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
-                    while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
-                    }
-                    LAM.setPower(0); // Turns off once target reached
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    AM.setPower(0.25);
+                    AM.setTargetPosition((int) (0.60 * 3895.9));
+                    AM.setPower(0.50);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (AM.isBusy()) {
+                    while (LAM.isBusy() || AM.isBusy()){
                     }
+                    LAM.setPower(0);
                     AM.setPower(0);
-
                     exitEncoders();
-                    currentHeight = 2; // Tells the code that the current height is now 2
                 }
 
-                // Set arm and actuator to MIDDLE HIGHEST setting
                 if (gamepad2.b) {
-                    resetEncoders();startEncoders();
-
-                    if (currentHeight == 1) { // If it is at preset "a"
-
-                        int armLevel = (int) (20 * 145.1); // The distance needed to go up from "a"
-                        LAM.setTargetPosition(armLevel); // Sets the target
-
-                        int armHeight = (int) (0.25 * 3895.9); // The distance needed to go up from "a"
-                        AM.setTargetPosition(armHeight); // Sets the target
-
-                    } else if (currentHeight == 2) { // If it is at preset "x"
-
-                        int armLevel = (int) (5 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);
-
-                    } else if (currentHeight == 4) { // If it is at preset "y"
-
-                        int armLevel = (int) (-5 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (-0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-
-                    } else { // Currently at "b"
-                        int armLevel = (int) (0);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);
-                    }
-
+                    startEncoders();
+                    LAM.setTargetPosition(0);
                     LAM.setPower(1);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
-                    while (LAM.isBusy()) { // This is like a sleep method but it last as long as needed to get to the encoder target
-                    }
-                    LAM.setPower(0); // Turns off once target reached
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    AM.setPower(0.25);
+                    AM.setTargetPosition((int) (0.90 * 3895.9));
+                    AM.setPower(0.50);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (AM.isBusy()) {
+                    while (LAM.isBusy() || AM.isBusy()){
                     }
+                    LAM.setPower(0);
                     AM.setPower(0);
-
                     exitEncoders();
-                    currentHeight = 3; // Tells the code that the current height is now 3
                 }
 
-                // Set arm and actuator to HIGHEST setting
                 if (gamepad2.y) {
-                    resetEncoders();startEncoders();
-
-                    if (currentHeight == 1) {
-                        // If it is at preset "a"
-                        int armLevel = (int) (25 * 145.1); // The distance needed to go up from "a"
-                        LAM.setTargetPosition(armLevel); // Sets the target
-
-                        int armHeight = (int) (0.5 * 3895.9); // The distance needed to go up from "a"
-                        AM.setTargetPosition(armHeight); // Sets the target
-
-                    } else if (currentHeight == 2) { // If it is at preset "x"
-
-                        int armLevel = (int) (10 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-
-                    } else if (currentHeight == 3) { // If it is at preset "b"
-
-                        int armLevel = (int) (5 * 145.1);
-                        LAM.setTargetPosition(armLevel);
-
-                        int armHeight = (int) (0.25 * 3895.9);
-                        AM.setTargetPosition(armHeight);
-
-                    } else { // Currently at "y"
-                        int armLevel = (int) (0);
-                        LAM.setTargetPosition(armLevel);
-                        int armHeight = (int) (0);
-                        AM.setTargetPosition(armHeight);
-                    }
-
+                    startEncoders();
+                    LAM.setTargetPosition((int) (25 * 145.1));
                     LAM.setPower(1);
-                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tells the linear actuator to go to the calculated position
-                    while (LAM.isBusy()){// This is like a sleep method but it last as long as needed to get to the encoder target
-                    }
-                    LAM.setPower(0); // Turns off once target reached
+                    LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    AM.setPower(0.25);
+                    AM.setTargetPosition((int) (0.90 * 3895.9));
+                    AM.setPower(0.50);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    while (AM.isBusy()) {
+                    while (LAM.isBusy() || AM.isBusy()){
                     }
+                    LAM.setPower(0);
                     AM.setPower(0);
-
                     exitEncoders();
-                    currentHeight = 4; // Tells the code that the current height is now 4
                 }
 
                 // self explanatory
                 if (gamepad2.left_trigger > 0) {
-                    CS.setPosition(0.20); // closeClaw
+                    CS.setPosition(0.20); // openClaw
                 }
                 if (gamepad2.right_trigger > 0) {
-                    CS.setPosition(0.55); // openClaw
+                    CS.setPosition(0.50); // closeClaw
+                }
+
+                if (gamepad2.left_stick_button) {
+                    resetEncoders();
                 }
             }
         }
