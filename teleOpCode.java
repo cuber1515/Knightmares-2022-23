@@ -116,7 +116,7 @@ public class teleOpCode extends LinearOpMode {
 
                 // This allows you to manually lift the arm
                 if (gamepad2.dpad_up) {
-                    AM.setPower(0.5); // Set power
+                    AM.setPower(0.8); // Set power
                     sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
                 } else {
                     AM.setPower(0); // Turn off if it isn't
@@ -124,7 +124,7 @@ public class teleOpCode extends LinearOpMode {
 
                 // This allows you to manually lower the arm
                 if (gamepad2.dpad_down) {
-                    AM.setPower(-0.5); // Set power
+                    AM.setPower(-0.8); // Set power
                     sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
                 } else {
                     AM.setPower(0); // Turn off if it isn't
@@ -132,14 +132,14 @@ public class teleOpCode extends LinearOpMode {
 
                 // This allows you to manually lift the linear actuator
                 if (gamepad2.right_bumper) {
-                    LAM.setPower(0.6); // Set power
+                    LAM.setPower(0.8); // Set power
                     sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
                 } else {
                     LAM.setPower(0); // Turn off if it isn't
                 }
 
                 if (gamepad2.left_bumper) {
-                    LAM.setPower(-0.6); // Set power
+                    LAM.setPower(-0.8); // Set power
                     sleep(200); // Wait a 100 milliseconds and check if button is still being pressed
                 } else {
                     LAM.setPower(0); // Turn off if it isn't
@@ -152,7 +152,7 @@ public class teleOpCode extends LinearOpMode {
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     AM.setTargetPosition((int) (0));
-                    AM.setPower(0.50);
+                    AM.setPower(1);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy() || AM.isBusy()){
                     }
@@ -161,7 +161,7 @@ public class teleOpCode extends LinearOpMode {
                     exitEncoders();
                 }
 
-                if (gamepad2.x) {
+/*                if (gamepad2.x) {
                     startEncoders();
                     LAM.setTargetPosition(0);
                     LAM.setPower(1);
@@ -175,7 +175,7 @@ public class teleOpCode extends LinearOpMode {
                     LAM.setPower(0);
                     AM.setPower(0);
                     exitEncoders();
-                }
+                }*/
 
                 if (gamepad2.b) {
                     startEncoders();
@@ -184,7 +184,7 @@ public class teleOpCode extends LinearOpMode {
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     AM.setTargetPosition((int) (0.90 * 3895.9));
-                    AM.setPower(0.50);
+                    AM.setPower(1);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy() || AM.isBusy()){
                     }
@@ -200,7 +200,7 @@ public class teleOpCode extends LinearOpMode {
                     LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     AM.setTargetPosition((int) (0.90 * 3895.9));
-                    AM.setPower(0.50);
+                    AM.setPower(1);
                     AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     while (LAM.isBusy() || AM.isBusy()){
                     }
@@ -211,7 +211,7 @@ public class teleOpCode extends LinearOpMode {
 
                 // self explanatory
                 if (gamepad2.left_trigger > 0) {
-                    CS.setPosition(0.20); // openClaw
+                    CS.setPosition(0.10); // openClaw
                 }
                 if (gamepad2.right_trigger > 0) {
                     CS.setPosition(0.50); // closeClaw
