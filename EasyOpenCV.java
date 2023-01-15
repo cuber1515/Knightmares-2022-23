@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -16,13 +16,15 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name="nier")
-public class EasyOpenCV extends OpMode{
+public class EasyOpenCV extends LinearOpMode {
 
     OpenCvWebcam webcam = null;
 
     @Override
-    public void init() {
-
+    public void runOpMode() throws InterruptedException {
+        /**
+         * Setting up camera stuff
+         */
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "webcam");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
@@ -39,56 +41,133 @@ public class EasyOpenCV extends OpMode{
 
             }
         });
+
+        /**
+         * When start is pressed
+         */
+        waitForStart();
+
+        myPipe thePipe = new myPipe();
+
+        if (thePipe.isBlue()) {
+            telemetry.addLine("blue has been returned");
+        } else if (thePipe.isGreen()) {
+            telemetry.addLine("green has been returned");
+        } else if (thePipe.isOrange()) {
+            telemetry.addLine("orange has been returned");
+        } else {
+            telemetry.addLine("no color has been returned");
+        }
+        telemetry.update();
+
     }
 
-    @Override
-    public void loop() {
-
-    }
-
+    /**
+     * The pipeline
+     */
     class myPipe extends OpenCvPipeline {
+        // The booleans that will be used in the rest of the code
+        boolean blueDetecc = false;
+        boolean greenDetecc = false;
+        boolean orangeDetecc = false;
+
         public Mat processFrame(Mat input) {
+            // The variables
             Mat YCbCr = new Mat();
-            Mat leftCrop;
-            Mat rightCrop;
-            double leftavgfin;
-            double rightavgfin;
+            Mat frame;
+            double BFrameavgfin;
+            double GFrameavgfin;
+            double OFrameavgfin;
             Mat outPut = new Mat();
-            Scalar rectColor = new Scalar(255.0, 0.0, 0.0);
+            Scalar blue = new Scalar(4, 18, 176);
+            Scalar green = new Scalar(17, 166, 12);
+            Scalar orange = new Scalar(166, 81, 7);
 
 
 
             Imgproc.cvtColor(input, YCbCr, Imgproc.COLOR_RGB2YCrCb);
             telemetry.addLine("pipeline running");
 
-            Rect leftRect = new Rect(1, 1, 319, 359);
-            Rect rightRect = new Rect(320, 1, 319, 359);
+            Rect frameRect = new Rect(213, 120, 212, 119);
 
             input.copyTo(outPut);
-            Imgproc.rectangle(outPut, leftRect, rectColor, 2);
-            Imgproc.rectangle(outPut, rightRect, rectColor, 2);
 
-            leftCrop = YCbCr.submat(leftRect);
-            rightCrop = YCbCr.submat(rightRect);
+            /**
+             * Find amount of blue in frame
+             */
+            Imgproc.rectangle(outPut, frameRect, blue, 2);
 
-            Core.extractChannel(leftCrop, leftCrop, 2);
-            Core.extractChannel(rightCrop, rightCrop, 2);
+            frame = YCbCr.submat(frameRect);
 
-            Scalar leftavg = Core.mean(leftCrop);
-            Scalar rightavg = Core.mean(rightCrop);
+            Core.extractChannel(frame, frame, 2);
 
-            leftavgfin = leftavg.val[0];
-            rightavgfin = rightavg.val[0];
+            Scalar blueAvg = Core.mean(frame);
 
-            if (leftavgfin > rightavgfin) {
-                telemetry.addLine("Left");
+            BFrameavgfin = blueAvg.val[0]; // Store the info
+
+            /**
+             * Find amount of green in frame
+             */
+            Imgproc.rectangle(outPut, frameRect, green, 2);
+
+            frame = YCbCr.submat(frameRect);
+
+            Core.extractChannel(frame, frame, 2);
+
+            Scalar greenAvg = Core.mean(frame);
+
+            GFrameavgfin = greenAvg.val[0]; // Store the info
+
+            /**
+             * Find amount of orange in frame
+             */
+            Imgproc.rectangle(outPut, frameRect, orange, 2);
+
+            frame = YCbCr.submat(frameRect);
+
+            Core.extractChannel(frame, frame, 2);
+
+            Scalar orangeAvg = Core.mean(frame);
+
+            OFrameavgfin = orangeAvg.val[0]; // Store the info
+
+            /**
+             * Find which color there is more of
+             */
+            if (BFrameavgfin > GFrameavgfin && BFrameavgfin > OFrameavgfin) {
+                blueDetecc = true;
+                greenDetecc = false;
+                orangeDetecc = false;
+                telemetry.addLine("I see blue");
+            } else if (GFrameavgfin > BFrameavgfin && GFrameavgfin > OFrameavgfin) {
+                blueDetecc = false;
+                greenDetecc = true;
+                orangeDetecc = false;
+                telemetry.addLine("I see green");
+            } else if (OFrameavgfin > BFrameavgfin && OFrameavgfin > GFrameavgfin) {
+                blueDetecc = false;
+                greenDetecc = false;
+                orangeDetecc = true;
+                telemetry.addLine("I see orange");
             } else {
-                telemetry.addLine("Right");
+                blueDetecc = false;
+                greenDetecc = false;
+                orangeDetecc = false;
+                telemetry.addLine("I don't see color");
             }
             telemetry.update();
 
             return (outPut);
         }
+        // Usable methods outside of pipeline
+        public boolean isBlue() {
+            return blueDetecc;
+        }
+        public boolean isGreen() {
+            return greenDetecc;
+        }
+        public boolean isOrange() {
+            return orangeDetecc;
+        }
     }
-
 }
