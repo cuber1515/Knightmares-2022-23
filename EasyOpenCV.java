@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -15,10 +17,88 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name="nier")
+@Autonomous(name="Auto")
 public class EasyOpenCV extends LinearOpMode {
 
-    OpenCvWebcam webcam = null;
+    /**
+     * Variables
+     */
+    OpenCvWebcam webcam;
+    DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
+    Servo CS; // All of the servos
+    double circumference = 3.14 * 4; // circumference of the wheels
+
+    /**
+     * Methods
+     */
+    // This method will start encoders
+    public void startEncoders() {
+        LAM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        AM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    // This method will exit encoders
+    public void exitEncoders() {
+        LAM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        AM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    // This method will restart encoders
+    public void resetEncoders() {
+        LAM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        AM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    // Set power for all wheels
+    public void powerSet(double speed) {
+        FR.setPower(speed);
+        FL.setPower(speed);
+        BR.setPower(speed);
+        BL.setPower(speed);
+    }
+
+    // Run to position
+    public void runToPosition(){
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    // Go foward by inches
+    public void ForwardsInch(double inches) {
+
+        double rotationsNeeded = inches / circumference;
+        int target = (int) (rotationsNeeded * 537.689);
+
+        FL.setTargetPosition(target);
+        FR.setTargetPosition(target);
+        BL.setTargetPosition(target);
+        BR.setTargetPosition(target);
+
+        powerSet(0.5);
+
+        runToPosition();
+
+        while(FR.isBusy() || FL.isBusy() || BR.isBusy() || BL.isBusy()) {
+        }
+
+        powerSet(0);
+    }
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -81,9 +161,9 @@ public class EasyOpenCV extends LinearOpMode {
             double GFrameavgfin;
             double OFrameavgfin;
             Mat outPut = new Mat();
-            Scalar blue = new Scalar(29, 44, 85);
-            Scalar green = new Scalar(17, 166, 12);
-            Scalar orange = new Scalar(166, 81, 7);
+            Scalar blue = new Scalar(0, 0, 255);
+            Scalar green = new Scalar(0, 255, 0);
+            Scalar orange = new Scalar(255, 0, 0);
 
 
 
