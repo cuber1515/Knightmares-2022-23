@@ -60,6 +60,8 @@ public class EasyOpenCV extends LinearOpMode {
         }
         telemetry.update();
 
+        sleep(1200000);
+
     }
 
     /**
@@ -79,7 +81,7 @@ public class EasyOpenCV extends LinearOpMode {
             double GFrameavgfin;
             double OFrameavgfin;
             Mat outPut = new Mat();
-            Scalar blue = new Scalar(4, 18, 176);
+            Scalar blue = new Scalar(29, 44, 85);
             Scalar green = new Scalar(17, 166, 12);
             Scalar orange = new Scalar(166, 81, 7);
 
@@ -91,6 +93,8 @@ public class EasyOpenCV extends LinearOpMode {
             Rect frameRect = new Rect(213, 120, 212, 119);
 
             input.copyTo(outPut);
+
+
 
             /**
              * Find amount of blue in frame
