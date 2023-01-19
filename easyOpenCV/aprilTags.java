@@ -118,6 +118,7 @@ public class aprilTags extends LinearOpMode {
     // Go forward by inches
     public void ForwardsInch(double inches) {
 
+        resetEncoders();startEncoders();
         double rotationsNeeded = inches / circumference;
         int target = (int) (rotationsNeeded * 537.689);
 
@@ -134,10 +135,12 @@ public class aprilTags extends LinearOpMode {
         }
 
         powerSet(0);
+        exitEncoders();
     }
 
-    //turn right if inches + left if inches -
+    // Turn right if inches + left if inches -
     public void turnInch(double inches) {
+        resetEncoders();startEncoders();
         double rotationsNeeded = inches / circumference;
         int targetL = (int) -(rotationsNeeded * 537.689);
         int targetR = (int) (rotationsNeeded * 537.689);
@@ -155,6 +158,60 @@ public class aprilTags extends LinearOpMode {
         }
 
         powerSet(0);
+        exitEncoders();
+    }
+
+    // Set arm height
+    public void setArm(int level) {
+        if (level == 0 || level > 3) {
+            LAM.setTargetPosition(0);
+            LAM.setPower(1);
+            LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            AM.setTargetPosition((int) (0));
+            AM.setPower(1);
+            AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while (LAM.isBusy() || AM.isBusy()){
+            }
+            LAM.setPower(0);
+            AM.setPower(0);
+        } else if (level == 1) {
+            LAM.setTargetPosition(0);
+            LAM.setPower(1);
+            LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            AM.setTargetPosition((int) (0.60 * 3895.9));
+            AM.setPower(0.50);
+            AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while (LAM.isBusy() || AM.isBusy()) {
+            }
+            LAM.setPower(0);
+            AM.setPower(0);
+        } else if (level == 2) {
+            LAM.setTargetPosition(0);
+            LAM.setPower(1);
+            LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            AM.setTargetPosition((int) (0.90 * 3895.9));
+            AM.setPower(1);
+            AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while (LAM.isBusy() || AM.isBusy()){
+            }
+            LAM.setPower(0);
+            AM.setPower(0);
+        } else if (level == 3) {
+            LAM.setTargetPosition((int) (25 * 145.1));
+            LAM.setPower(1);
+            LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            AM.setTargetPosition((int) (0.90 * 3895.9));
+            AM.setPower(1);
+            AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while (LAM.isBusy() || AM.isBusy()){
+            }
+            LAM.setPower(0);
+            AM.setPower(0);
+        }
     }
 
     @Override
@@ -245,54 +302,33 @@ public class aprilTags extends LinearOpMode {
 
         CS.setPosition(closeClaw);
 
-        resetEncoders();
-        startEncoders();
         resetEncodersA();
         startEncodersA();
 
         ForwardsInch(24);
 
-        LAM.setTargetPosition(0);
-        LAM.setPower(1);
-        LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setArm(3);
 
-        AM.setTargetPosition((int) (0.90 * 3895.9));
-        AM.setPower(1);
-        AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (LAM.isBusy() || AM.isBusy()){
-        }
-        LAM.setPower(0);
-        AM.setPower(0);
-
-        resetEncoders();startEncoders();
         turnInch(-5);
 
         CS.setPosition(openClaw);
-
-        resetEncoders();startEncoders();
+        
         turnInch(5);
 
-        resetEncoders();startEncoders();
         ForwardsInch(-6);
-        exitEncoders();
+        
+        setArm(0);
 
         /* Actually do something useful */
         if (visibleTag == left) {
-            resetEncoders();
-            startEncoders();
             turnInch(-5);
-            resetEncoders();startEncoders();
             ForwardsInch(10);
-
         } else if (visibleTag == middle) {
             /**
              * do nothing
              */
         } else if (visibleTag == right) {
-            resetEncoders();
-            startEncoders();
             turnInch(5);
-            resetEncoders();startEncoders();
             ForwardsInch(10);
         } else {
             /**
