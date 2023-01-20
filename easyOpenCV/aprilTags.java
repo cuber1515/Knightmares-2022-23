@@ -161,6 +161,30 @@ public class aprilTags extends LinearOpMode {
         exitEncoders();
     }
 
+    public void strafe(double power, String direction, int tIme) {
+        if (direction == "right") {
+            FR.setPower(-power);
+            BL.setPower(-power);
+            FL.setPower(power);
+            BR.setPower(power);
+            sleep(tIme);
+            FR.setPower(0);
+            FL.setPower(0);
+            BR.setPower(0);
+            BL.setPower(0);
+        } else if (direction == "left") {
+            FR.setPower(power);
+            BL.setPower(power);
+            FL.setPower(-power);
+            BR.setPower(-power);
+            sleep(tIme);
+            FR.setPower(0);
+            FL.setPower(0);
+            BR.setPower(0);
+            BL.setPower(0);
+        }
+    }
+
     // Set arm height
     public void setArm(int level) {
         if (level == 0 || level > 3) {
@@ -216,6 +240,18 @@ public class aprilTags extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        FR = hardwareMap.dcMotor.get("Front Right");
+        FL = hardwareMap.dcMotor.get("Front Left");
+        BR = hardwareMap.dcMotor.get("Back Right");
+        BL = hardwareMap.dcMotor.get("Back Left");
+        AM = hardwareMap.dcMotor.get("Arm Lift");
+        LAM = hardwareMap.dcMotor.get("Linear Actuator");
+        CS = hardwareMap.servo.get("Claw Servo");
+
+        BL.setDirection((DcMotor.Direction.REVERSE)); // This will reverse the back right wheel (idk why but only this one needs to be reversed)
+        FL.setDirection((DcMotor.Direction.REVERSE)); // This will reverse the front right wheel (idk why but only this one needs to be reversed)
+
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -298,43 +334,28 @@ public class aprilTags extends LinearOpMode {
             telemetry.update();
         }
 
-        int visibleTag = tagOfInterest.id;
-
         CS.setPosition(closeClaw);
+        sleep(500);
+        LAM.setPower(0.5);
+        sleep(200);
+        LAM.setPower(0);
+        sleep(500);
 
-        resetEncodersA();
-        startEncodersA();
-
-        ForwardsInch(24);
-
-        setArm(3);
-
-        turnInch(-5);
-
-        CS.setPosition(openClaw);
-        
-        turnInch(5);
-
-        ForwardsInch(-6);
-        
-        setArm(0);
-
-        /* Actually do something useful */
-        if (visibleTag == left) {
-            turnInch(-5);
-            ForwardsInch(10);
-        } else if (visibleTag == middle) {
+        if (tagOfInterest.id == left) {
+            strafe(0.5, "left", 1500);
+        } else if (tagOfInterest.id == middle) {
             /**
-             * do nothing
+             * Do nothing here
              */
-        } else if (visibleTag == right) {
-            turnInch(5);
-            ForwardsInch(10);
+        } else if (tagOfInterest.id == right) {
+            strafe(0.5, "right", 1500);
         } else {
             /**
-             * do nothing
+             * Do nothing
              */
         }
+
+        ForwardsInch(44);
     }
 
     void tagToTelemetry(AprilTagDetection detection) {
