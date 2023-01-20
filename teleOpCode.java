@@ -25,7 +25,6 @@ public class teleOpCode extends LinearOpMode {
      * ALL THE METHODS
      */
 
-    // This method will start encoders
     public void startEncoders() {
         LAM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         AM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -101,11 +100,11 @@ public class teleOpCode extends LinearOpMode {
                     BL.setPower(0);
                 }
 
-                // This will change the above between slo-mo and normal speed
+                // super-duper-speedy-mode
                 if (gamepad1.a) {
                     if (speed == 0.50) { // If it is at default speed
-                        speed = 0.15; // Go to slo-mo
-                    } else if (speed == 0.15) { // If at slo-mo
+                        speed = 1; // Go to HIGH speed
+                    } else if (speed == 1) { // If at HIGH speed
                         speed = 0.50; // go to default speed
                     }
                 }
