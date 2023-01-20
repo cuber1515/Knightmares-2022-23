@@ -344,15 +344,12 @@ public class aprilTags extends LinearOpMode {
         if (tagOfInterest.id == left) {
             strafe(0.5, "left", 1500);
         } else if (tagOfInterest.id == middle) {
-            /**
-             * Do nothing here
-             */
+            strafe(0.5, "left", 200);
         } else if (tagOfInterest.id == right) {
-            strafe(0.5, "right", 1500);
+            strafe(0.5, "right", 1200);
         } else {
-            /**
-             * Do nothing
-             */
+            strafe(0.5, "left", 200);
+
         }
 
         ForwardsInch(44);
