@@ -213,7 +213,7 @@ public class teleOpCode extends LinearOpMode {
                     CS.setPosition(0.10); // openClaw
                 }
                 if (gamepad2.right_trigger > 0) {
-                    CS.setPosition(0.50); // closeClaw
+                    CS.setPosition(0.55); // closeClaw
                 }
 
                 if (gamepad2.left_stick_button) {
