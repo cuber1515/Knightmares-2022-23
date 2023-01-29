@@ -18,7 +18,6 @@ public class teleOpCode extends LinearOpMode {
 
     DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
     Servo CS; // All of the servos
-    int currentHeight = 1; // This variable is for the preset heights of the arm
     double speed = 0.5; // This is the speed at which the wheels will go
 
     /**

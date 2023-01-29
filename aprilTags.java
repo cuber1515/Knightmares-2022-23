@@ -47,7 +47,8 @@ public class aprilTags extends LinearOpMode {
     DcMotor FR, FL, BR, BL, AM, LAM; // All of the motors
     Servo CS; // All of the servos
     double circumference = 3.14 * 4; // circumference of the wheels
-    double closeClaw = 0.50;
+    double ticksPerRev = 537.7;
+    double closeClaw = 0.55;
     double openClaw = 0.10;
 
     /**
@@ -138,8 +139,8 @@ public class aprilTags extends LinearOpMode {
     public void turnInch(double inches) {
         resetEncoders();startEncoders();
         double rotationsNeeded = inches / circumference;
-        int targetL = (int) -(rotationsNeeded * 537.689);
-        int targetR = (int) (rotationsNeeded * 537.689);
+        int targetL = (int) -(rotationsNeeded * ticksPerRev);
+        int targetR = (int) (rotationsNeeded * ticksPerRev);
 
         FR.setTargetPosition(targetR);
         BR.setTargetPosition(targetR);
