@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@TeleOp(name="teleOp")
-@Disabled
+@TeleOp(name="Tank drive")
+//@Disabled
 public class teleOpCode extends LinearOpMode {
     /**
      * ALL THE VARIABLES

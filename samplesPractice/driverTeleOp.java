@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 //@Config
-@Disabled
-@TeleOp(group = "drive", name = "driver centric")
+//@Disabled
+@TeleOp(group = "drive", name = "robot centric")
 public class driverTeleOp extends LinearOpMode {
     /**
      * ALL THE VARIABLES
