@@ -62,7 +62,7 @@ public class BackupLeft extends LinearOpMode {
     public static double strafe1 = 38;
     public static double forward1 = 64;
     public static double turn1 = 90;
-    public static double strafeST = 12;
+    public static double strafeST = 15;
     public static double park2 = 24;
     public static double park3 = 48;
     public static double lastTurn = -90;
