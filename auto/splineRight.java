@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +20,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(group = "drive", name = "Auto-right")
-public class rightAuto extends LinearOpMode {
+@Autonomous(group = "drive", name = "spline right")
+public class splineRight extends LinearOpMode {
     /**
      * EasyOpenCV specific variables
      */
@@ -59,17 +60,30 @@ public class rightAuto extends LinearOpMode {
 
 
     // This can be edited in the FTC Dashboard
-    public static double strafeOut = 38;
-    public static double headOut = 56;
+    public static double startX = 36;
+    public static double startY = -64;
+    public static double startHeading = -90;
+    public static double strafeOutX = 5;
+    public static double strafeOutY = -64;
+    public static double strafeOutHeading = -90;
+    public static double headOutX = 5;
+    public static double headOutY = -5;
+    public static double headOutHeading = -90;
     public static double turn1 = -45;
     public static double turn2 = -45;
-    public static double goGrab = 46;
-    public static double goPlace = -22;
-    public static double turn3 = 135;
+    public static double goGrabX = 60;
+    public static double goGrabY = -5;
+    public static double goGrabHeading = 180;
+    public static double goPlaceX = 36;
+    public static double goPlaceY = -5;
+    public static double goPlaceHeading = -90;
+    public static double turn3 = 45;
     public static double turn4 = 45;
-    public static double oneBlock = 24;
-    public static double turn5 = -90;
-
+    public static double park1X = 12;
+    public static double park1Y = -5;
+    public static double park2X = 60;
+    public static double park2Y = -5;
+    public static double turnEnd = -90;
 
     /**
      * Methods
@@ -136,31 +150,31 @@ public class rightAuto extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(new Pose2d());
+        Pose2d startPoint = new Pose2d(startX, startY, Math.toRadians(startHeading));
 
-        Trajectory STRAFEOUT = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(strafeOut)
+        drive.setPoseEstimate(startPoint);
+
+        Trajectory GOOUT = drive.trajectoryBuilder(startPoint)
+                .splineToConstantHeading(new Vector2d(strafeOutX, strafeOutY), Math.toRadians(strafeOutHeading))
+                .splineToConstantHeading(new Vector2d(headOutX, headOutY), Math.toRadians(headOutHeading))
                 .build();
 
-        Trajectory HEADOUT = drive.trajectoryBuilder(STRAFEOUT.end())
-                .forward(headOut)
-                .build();
-
-        Trajectory GOGRAB = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(turn1 + turn2)), false)
-                .forward(goGrab)
+        Trajectory GOGRAB = drive.trajectoryBuilder(GOOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
+                .lineTo(new Vector2d(goGrabX, goGrabY))
                 .build();
 
         Trajectory GOPLACE = drive.trajectoryBuilder(GOGRAB.end())
-                .forward(goPlace)
+                .splineToSplineHeading(new Pose2d(goPlaceX, goPlaceY, Math.toRadians(goPlaceHeading)), Math.toRadians(0))
                 .build();
 
-        Trajectory PARK1 = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(turn3 + turn4)), false)
-                .forward(oneBlock)
+        Trajectory PARK1 = drive.trajectoryBuilder(GOPLACE.end().plus(new Pose2d(0, 0, Math.toRadians(turn3 + turn4))), false)
+                .lineTo(new Vector2d(park1X, park1Y))
                 .build();
 
-        Trajectory PARK3 = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(turn3 + turn4)), false)
-                .forward(-oneBlock)
+        Trajectory PARK3 = drive.trajectoryBuilder(GOPLACE.end().plus(new Pose2d(0, 0, Math.toRadians(turn3 + turn4))), false)
+                .lineTo(new Vector2d(park2X, park2Y))
                 .build();
+
 
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -226,19 +240,15 @@ public class rightAuto extends LinearOpMode {
         resetEncoders();
         startEncoders();
 
-        // pre-loaded cone
         CS.setPosition(closeClaw);
         sleep(1000);
         setArm(5, 0);
-        drive.followTrajectory(STRAFEOUT);
-        drive.followTrajectory(HEADOUT);
+        drive.followTrajectory(GOOUT);
         setArm(25, 0.90);
         drive.turn(Math.toRadians(turn1));
         CS.setPosition(openClaw);
         sleep(1000);
-
-        // score one cone stack cone
-        drive.turn(Math.toRadians(turn2));
+        drive.turn(turn2);
         setArm(15, 0);
         drive.followTrajectory(GOGRAB);
         CS.setPosition(closeClaw);
@@ -251,16 +261,13 @@ public class rightAuto extends LinearOpMode {
         sleep(1000);
         drive.turn(turn4);
         setArm(0, 0);
-
         if (aprilValue == left) {
             drive.followTrajectory(PARK1);
         } else if (aprilValue == right) {
             drive.followTrajectory(PARK3);
         } else {
         }
-
-        drive.turn(turn5);
-
+        drive.turn(turnEnd);
     }
 
     void tagToTelemetry(AprilTagDetection detection) {
