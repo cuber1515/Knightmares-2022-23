@@ -59,14 +59,12 @@ public class BackupLeft extends LinearOpMode {
 
 
     // This can be edited in the FTC Dashboard
-    public static double strafe1 = 38;
-    public static double forward1 = 64;
-    public static double turn1 = 90;
-    public static double strafeST = 15;
-    public static double park2 = 24;
-    public static double park3 = 48;
-    public static double lastTurn = -90;
-    public static double groundForward = 5;
+    public static double strafeOut = 27.5;
+    public static double headOut = 54;
+    public static double turn1 = 51;
+    public static double turn2 = 90 - turn1;
+    public static double oneBlock = 24;
+    public static double turn5 = -90;
 
 
     /**
@@ -136,33 +134,24 @@ public class BackupLeft extends LinearOpMode {
 
         drive.setPoseEstimate(new Pose2d());
 
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(strafe1)
+        Trajectory STRAFEOUT = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(strafeOut)
                 .build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .forward(forward1)
+        Trajectory HEADOUT = drive.trajectoryBuilder(STRAFEOUT.end())
+                .forward(headOut)
                 .build();
 
-        Trajectory traj3 = drive.trajectoryBuilder(traj1.end().plus(new Pose2d(0, 0, Math.toRadians(turn1))), false)
-                .forward(-groundForward)
+        Trajectory PARK2 = drive.trajectoryBuilder(HEADOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
+                .forward(oneBlock)
                 .build();
 
-
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .forward(groundForward)
+        Trajectory PARK1 = drive.trajectoryBuilder(HEADOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
+                .forward(oneBlock*2)
                 .build();
 
-        Trajectory parkStrafe = drive.trajectoryBuilder(traj4.end())
-                .strafeLeft(strafeST)
-                .build();
-
-        Trajectory PARK2 = drive.trajectoryBuilder(parkStrafe.end())
-                .forward(park2)
-                .build();
-
-        Trajectory PARK3 = drive.trajectoryBuilder(parkStrafe.end())
-                .forward(park3)
+        Trajectory BACK = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(-90)), false)
+                .forward(-5)
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
@@ -233,26 +222,26 @@ public class BackupLeft extends LinearOpMode {
         CS.setPosition(closeClaw);
         sleep(1000);
         setArm(5, 0);
-        drive.followTrajectory(traj1);
+        drive.followTrajectory(STRAFEOUT);
+        drive.followTrajectory(HEADOUT);
         setArm(25, 0.90);
-        drive.followTrajectory(traj2);
         drive.turn(Math.toRadians(turn1));
-        drive.followTrajectory(traj3);
         CS.setPosition(openClaw);
         sleep(1000);
+        drive.turn(Math.toRadians(turn2));
 
-        // parking
-        drive.followTrajectory(traj4);
-        drive.followTrajectory(parkStrafe);
 
         if (aprilValue == middle) {
             drive.followTrajectory(PARK2);
-        } else if (aprilValue == right) {
-            drive.followTrajectory(PARK3);
+        } else if (aprilValue == left) {
+            drive.followTrajectory(PARK1);
         } else {
         }
-        drive.turn(Math.toRadians(lastTurn));
+
+        drive.turn(Math.toRadians(turn5));
         setArm(0, 0);
+        drive.followTrajectory(BACK);
+
 
     }
 

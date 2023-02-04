@@ -54,21 +54,21 @@ public class leftAuto extends LinearOpMode {
     Servo CS; // All of the servos
     double ticksPerRev = 3895.9; // Ticks for the arm motor
     double lTicksPerRev = 145.1; // Ticks for the linear actuator
-    public static double closeClaw = 0.55;
+    public static double closeClaw = 0.60;
     public static double openClaw = 0.10;
 
 
     // This can be edited in the FTC Dashboard
-    public static double strafeOut = 38;
-    public static double headOut = 56;
-    public static double turn1 = 45;
-    public static double turn2 = 45;
+    public static double strafeOut = 27.5;
+    public static double headOut = 54;
+    public static double turn1 = 51;
+    public static double turn2 = 39;
     public static double goGrab = 46;
     public static double goPlace = -22;
     public static double turn3 = -135;
     public static double turn4 = -45;
     public static double oneBlock = 24;
-    public static double turn5 = 90;
+    public static double turn5 = -90;
 
 
     /**
@@ -150,16 +150,20 @@ public class leftAuto extends LinearOpMode {
                 .forward(goGrab)
                 .build();
 
-        Trajectory GOPLACE = drive.trajectoryBuilder(GOGRAB.end())
-                .forward(goPlace)
+        Trajectory BACKUP = drive.trajectoryBuilder(GOGRAB.end())
+                .forward(-1)
                 .build();
 
-        Trajectory PARK1 = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(turn3 + turn4)), false)
-                .forward(-oneBlock)
+        Trajectory GOPLACE = drive.trajectoryBuilder(BACKUP.end())
+                .forward(goPlace + 1)
                 .build();
 
         Trajectory PARK3 = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(turn3 + turn4)), false)
                 .forward(oneBlock)
+                .build();
+
+        Trajectory PARK1 = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(turn3 + turn4)), false)
+                .forward(-oneBlock)
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
@@ -233,33 +237,35 @@ public class leftAuto extends LinearOpMode {
         drive.followTrajectory(STRAFEOUT);
         drive.followTrajectory(HEADOUT);
         setArm(25, 0.90);
-        drive.turn(turn1);
+        drive.turn(Math.toRadians(turn1));
         CS.setPosition(openClaw);
         sleep(1000);
 
         // score one cone stack cone
-        drive.turn(turn2);
-        setArm(15, 0);
+        drive.turn(Math.toRadians(turn2));
+        setArm(20, 0);
         drive.followTrajectory(GOGRAB);
         CS.setPosition(closeClaw);
         sleep(1000);
         setArm(25, 0);
+        drive.followTrajectory(BACKUP);
+        setArm(25, 0.90);
         drive.followTrajectory(GOPLACE);
         setArm(25, 0.90);
-        drive.turn(turn3);
+        drive.turn(Math.toRadians(turn3));
         CS.setPosition(openClaw);
         sleep(1000);
         drive.turn(turn4);
         setArm(0, 0);
 
-        if (aprilValue == left) {
-            drive.followTrajectory(PARK1);
-        } else if (aprilValue == right) {
+        if (aprilValue == right) {
             drive.followTrajectory(PARK3);
+        } else if (aprilValue == left) {
+            drive.followTrajectory(PARK1);
         } else {
         }
 
-        drive.turn(turn5);
+        drive.turn(Math.toRadians(turn5));
 
     }
 
