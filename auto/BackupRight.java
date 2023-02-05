@@ -62,9 +62,10 @@ public class BackupRight extends LinearOpMode {
     public static double strafeOut = 36.5;
     public static double headOut = 54;
     public static double turn1 = -51;
-    public static double turn2 = -39;
-    public static double oneBlock = 24;
+    public static double turn2 = 51;
+    public static double oneBlock = 29;
     public static double turn5 = 90;
+    public static double sTrafe = 5;
 
 
     /**
@@ -142,15 +143,19 @@ public class BackupRight extends LinearOpMode {
                 .forward(headOut)
                 .build();
 
-        Trajectory PARK2 = drive.trajectoryBuilder(HEADOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
-                .forward(oneBlock)
+        Trajectory STRAFEALITTLE = drive.trajectoryBuilder(HEADOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
+                .forward(-sTrafe)
                 .build();
 
-        Trajectory PARK3 = drive.trajectoryBuilder(HEADOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
-                .forward(oneBlock*2)
+        Trajectory PARK2 = drive.trajectoryBuilder(STRAFEALITTLE.end())
+                .strafeRight(oneBlock)
                 .build();
 
-        Trajectory BACK = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(90)), false)
+        Trajectory PARK3 = drive.trajectoryBuilder(STRAFEALITTLE.end())
+                .strafeRight(oneBlock*2)
+                .build();
+
+        Trajectory BACK = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)), false)
                 .forward(-5)
                 .build();
         while (!isStarted() && !isStopRequested()) {
@@ -223,11 +228,14 @@ public class BackupRight extends LinearOpMode {
         setArm(5, 0);
         drive.followTrajectory(STRAFEOUT);
         drive.followTrajectory(HEADOUT);
-        setArm(25, 0.90);
+        setArm(25, 0.95);
         drive.turn(Math.toRadians(turn1));
+        setArm(25, 0.95);
         CS.setPosition(openClaw);
         sleep(1000);
         drive.turn(Math.toRadians(turn2));
+        drive.followTrajectory(STRAFEALITTLE);
+        setArm(0, 0);
 
 
         if (aprilValue == middle) {
@@ -237,8 +245,7 @@ public class BackupRight extends LinearOpMode {
         } else {
         }
 
-        drive.turn(Math.toRadians(turn5));
-        setArm(0, 0);
+//        drive.turn(Math.toRadians(turn5));
         drive.followTrajectory(BACK);
 
     }

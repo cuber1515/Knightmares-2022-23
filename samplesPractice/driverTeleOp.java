@@ -24,7 +24,7 @@ public class driverTeleOp extends LinearOpMode {
     // Configure editable variables
     public static double speed = 0.5;
     public static double openClaw = 0.10;
-    public static double closeClaw = 0.55;
+    public static double closeClaw = 0.65;
     public static double armSpd = 0.8;
     public static double armHghtA = 0;
     public static double lamHghtA = 0;
