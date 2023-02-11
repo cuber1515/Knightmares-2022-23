@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(group = "drive", name = "spline right")
-@Disabled
+//@Disabled
 public class splineRight extends LinearOpMode {
     /**
      * EasyOpenCV specific variables
@@ -64,28 +64,29 @@ public class splineRight extends LinearOpMode {
     // This can be edited in the FTC Dashboard
     public static double startX = 36;
     public static double startY = -64;
-    public static double startHeading = -90;
+    public static double startHeading = 90;
     public static double strafeOutX = 5;
-    public static double strafeOutY = -64;
-    public static double strafeOutHeading = -90;
+    public static double strafeOutY = -60;
+    public static double strafeOutHeading = 90;
     public static double headOutX = 5;
     public static double headOutY = -5;
-    public static double headOutHeading = -90;
-    public static double turn1 = -45;
-    public static double turn2 = -45;
-    public static double goGrabX = 60;
+    public static double headOutHeading = 45;
+    public static double turn = -45;
+
+    public static double goGrabX = 55;
     public static double goGrabY = -5;
     public static double goGrabHeading = 180;
+    public static double backUpX = 50;
+    public static double backUpY = -5;
+    public static double backUpHeading = 180;
     public static double goPlaceX = 36;
     public static double goPlaceY = -5;
-    public static double goPlaceHeading = -90;
-    public static double turn3 = 45;
-    public static double turn4 = 45;
+    public static double goPlaceHeading = 135;
     public static double park1X = 12;
     public static double park1Y = -5;
     public static double park2X = 60;
     public static double park2Y = -5;
-    public static double turnEnd = -90;
+    public static double parkHeading = 90;
 
     /**
      * Methods
@@ -158,23 +159,27 @@ public class splineRight extends LinearOpMode {
 
         Trajectory GOOUT = drive.trajectoryBuilder(startPoint)
                 .splineToConstantHeading(new Vector2d(strafeOutX, strafeOutY), Math.toRadians(strafeOutHeading))
-                .splineToConstantHeading(new Vector2d(headOutX, headOutY), Math.toRadians(headOutHeading))
+                .splineToSplineHeading(new Pose2d(headOutX, headOutY, Math.toRadians(headOutHeading)), Math.toRadians(0))
                 .build();
 
-        Trajectory GOGRAB = drive.trajectoryBuilder(GOOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn1 + turn2))), false)
+        Trajectory GOGRAB = drive.trajectoryBuilder(GOOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn))), false)
                 .lineTo(new Vector2d(goGrabX, goGrabY))
+                .build();
+
+        Trajectory BACKUP = drive.trajectoryBuilder(GOGRAB.end())
+                .lineTo(new Vector2d(backUpX, backUpY))
                 .build();
 
         Trajectory GOPLACE = drive.trajectoryBuilder(GOGRAB.end())
                 .splineToSplineHeading(new Pose2d(goPlaceX, goPlaceY, Math.toRadians(goPlaceHeading)), Math.toRadians(0))
                 .build();
 
-        Trajectory PARK1 = drive.trajectoryBuilder(GOPLACE.end().plus(new Pose2d(0, 0, Math.toRadians(turn3 + turn4))), false)
-                .lineTo(new Vector2d(park1X, park1Y))
+        Trajectory PARK1 = drive.trajectoryBuilder(GOPLACE.end())
+                .splineToSplineHeading(new Pose2d(park1X, park1Y, Math.toRadians(parkHeading)), Math.toRadians(0))
                 .build();
 
-        Trajectory PARK3 = drive.trajectoryBuilder(GOPLACE.end().plus(new Pose2d(0, 0, Math.toRadians(turn3 + turn4))), false)
-                .lineTo(new Vector2d(park2X, park2Y))
+        Trajectory PARK3 = drive.trajectoryBuilder(GOPLACE.end())
+                .splineToSplineHeading(new Pose2d(park2X, park2Y, Math.toRadians(parkHeading)), Math.toRadians(0))
                 .build();
 
 
@@ -244,32 +249,29 @@ public class splineRight extends LinearOpMode {
 
         CS.setPosition(closeClaw);
         sleep(1000);
-        setArm(5, 0);
-        drive.followTrajectory(GOOUT);
         setArm(25, 0.90);
-        drive.turn(Math.toRadians(turn1));
+        drive.followTrajectory(GOOUT);
         CS.setPosition(openClaw);
         sleep(1000);
-        drive.turn(turn2);
-        setArm(15, 0);
+        drive.turn(Math.toRadians(turn));
+        setArm(20, 0);
         drive.followTrajectory(GOGRAB);
         CS.setPosition(closeClaw);
         sleep(1000);
         setArm(25, 0);
-        drive.followTrajectory(GOPLACE);
+        drive.followTrajectory(BACKUP);
         setArm(25, 0.90);
-        drive.turn(turn3);
+        drive.followTrajectory(GOPLACE);
         CS.setPosition(openClaw);
         sleep(1000);
-        drive.turn(turn4);
-        setArm(0, 0);
         if (aprilValue == left) {
             drive.followTrajectory(PARK1);
         } else if (aprilValue == right) {
             drive.followTrajectory(PARK3);
         } else {
         }
-        drive.turn(turnEnd);
+        setArm(0, 0);
+
     }
 
     void tagToTelemetry(AprilTagDetection detection) {
