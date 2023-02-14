@@ -62,6 +62,7 @@ public class splineRight extends LinearOpMode {
 
 
     // This can be edited in the FTC Dashboard
+    public static double topCone = 20;
     public static double startX = 36;
     public static double startY = -64;
     public static double startHeading = 90;
@@ -254,7 +255,7 @@ public class splineRight extends LinearOpMode {
         CS.setPosition(openClaw);
         sleep(1000);
         drive.turn(Math.toRadians(turn));
-        setArm(20, 0);
+        setArm(topCone, 0);
         drive.followTrajectory(GOGRAB);
         CS.setPosition(closeClaw);
         sleep(1000);
