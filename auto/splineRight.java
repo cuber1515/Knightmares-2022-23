@@ -71,8 +71,9 @@ public class splineRight extends LinearOpMode {
     public static double strafeOutHeading = 90;
     public static double headOutX = 5;
     public static double headOutY = -5;
-    public static double headOutHeading = 45;
-    public static double turn = -45;
+    public static double headOutHeading = 90;
+    public static double turn1 = -45;
+    public static double turn2 = -45;
 
     public static double goGrabX = 55;
     public static double goGrabY = -5;
@@ -82,12 +83,14 @@ public class splineRight extends LinearOpMode {
     public static double backUpHeading = 180;
     public static double goPlaceX = 36;
     public static double goPlaceY = -5;
-    public static double goPlaceHeading = 135;
+    public static double goPlaceHeading = 45;
+    public static double turn3 = 45;
     public static double park1X = 12;
     public static double park1Y = -5;
     public static double park2X = 60;
     public static double park2Y = -5;
-    public static double parkHeading = 90;
+    public static double parkHeading = 0;
+    public static double turnEnd = -90;
 
     /**
      * Methods
@@ -160,10 +163,10 @@ public class splineRight extends LinearOpMode {
 
         Trajectory GOOUT = drive.trajectoryBuilder(startPoint)
                 .splineToConstantHeading(new Vector2d(strafeOutX, strafeOutY), Math.toRadians(strafeOutHeading))
-                .splineToSplineHeading(new Pose2d(headOutX, headOutY, Math.toRadians(headOutHeading)), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(headOutX, headOutY), Math.toRadians(headOutHeading))
                 .build();
 
-        Trajectory GOGRAB = drive.trajectoryBuilder(GOOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn))), false)
+        Trajectory GOGRAB = drive.trajectoryBuilder(GOOUT.end().plus(new Pose2d(0, 0, Math.toRadians(turn2 + turn1))), false)
                 .lineTo(new Vector2d(goGrabX, goGrabY))
                 .build();
 
@@ -175,12 +178,16 @@ public class splineRight extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(goPlaceX, goPlaceY, Math.toRadians(goPlaceHeading)), Math.toRadians(0))
                 .build();
 
-        Trajectory PARK1 = drive.trajectoryBuilder(GOPLACE.end())
-                .splineToSplineHeading(new Pose2d(park1X, park1Y, Math.toRadians(parkHeading)), Math.toRadians(0))
+        Trajectory PARK1 = drive.trajectoryBuilder(GOPLACE.end().plus(new Pose2d(0, 0, Math.toRadians(turn3))), false)
+                .splineToConstantHeading(new Vector2d(park1X, park1Y), Math.toRadians(parkHeading))
                 .build();
 
         Trajectory PARK3 = drive.trajectoryBuilder(GOPLACE.end())
-                .splineToSplineHeading(new Pose2d(park2X, park2Y, Math.toRadians(parkHeading)), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(park2X, park2Y), Math.toRadians(parkHeading))
+                .build();
+
+        Trajectory BACK = drive.trajectoryBuilder(new Pose2d())
+                .forward(-5)
                 .build();
 
 
@@ -252,9 +259,10 @@ public class splineRight extends LinearOpMode {
         sleep(1000);
         setArm(25, 0.90);
         drive.followTrajectory(GOOUT);
+        drive.turn(Math.toRadians(turn1));
         CS.setPosition(openClaw);
         sleep(1000);
-        drive.turn(Math.toRadians(turn));
+        drive.turn(Math.toRadians(turn2));
         setArm(topCone, 0);
         drive.followTrajectory(GOGRAB);
         CS.setPosition(closeClaw);
@@ -265,13 +273,16 @@ public class splineRight extends LinearOpMode {
         drive.followTrajectory(GOPLACE);
         CS.setPosition(openClaw);
         sleep(1000);
+        drive.turn(Math.toRadians(turn3));
         if (aprilValue == left) {
             drive.followTrajectory(PARK1);
         } else if (aprilValue == right) {
             drive.followTrajectory(PARK3);
         } else {
         }
+        drive.turn(turnEnd);
         setArm(0, 0);
+        drive.followTrajectory(BACK);
 
     }
 
