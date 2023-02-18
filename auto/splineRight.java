@@ -62,35 +62,38 @@ public class splineRight extends LinearOpMode {
 
 
     // This can be edited in the FTC Dashboard
-    public static double topCone = 20;
+    public static double topCone = 17.8;
     public static double startX = 36;
     public static double startY = -64;
     public static double startHeading = 90;
-    public static double strafeOutX = 5;
+    public static double strafeOutX = 1.1;
     public static double strafeOutY = -60;
     public static double strafeOutHeading = 90;
-    public static double headOutX = 5;
-    public static double headOutY = -5;
+    public static double headOutX = 1;
+    public static double headOutY = -7.5;
     public static double headOutHeading = 90;
-    public static double turn1 = -45;
-    public static double turn2 = -45;
+    public static double turn1 = -49;
+    public static double turn2 = -41;
 
-    public static double goGrabX = 55;
-    public static double goGrabY = -5;
+    public static double goGrabX = 46;
+    public static double goGrabY = -9.50;
     public static double goGrabHeading = 180;
-    public static double backUpX = 50;
-    public static double backUpY = -5;
+    public static double backUpX = 42;
+    public static double backUpY = -9.50;
     public static double backUpHeading = 180;
-    public static double goPlaceX = 36;
-    public static double goPlaceY = -5;
-    public static double goPlaceHeading = 45;
+    public static double backup1 = 6;
+    public static double goPlaceX = 20;
+    public static double goPlaceY = -9.50;
+    public static double goPlaceHeading = 135;
     public static double turn3 = 45;
     public static double park1X = 12;
-    public static double park1Y = -5;
+    public static double park1Y = -9.50;
     public static double park2X = 60;
-    public static double park2Y = -5;
+    public static double park2Y = -9.50;
     public static double parkHeading = 0;
     public static double turnEnd = -90;
+
+    public static double liftLittle = 0.35;
 
     /**
      * Methods
@@ -174,7 +177,11 @@ public class splineRight extends LinearOpMode {
                 .lineTo(new Vector2d(backUpX, backUpY))
                 .build();
 
-        Trajectory GOPLACE = drive.trajectoryBuilder(GOGRAB.end())
+        Trajectory BACKUP1 = drive.trajectoryBuilder(BACKUP.end())
+                .forward(-backup1)
+                .build();
+
+        Trajectory GOPLACE = drive.trajectoryBuilder(BACKUP1.end())
                 .splineToSplineHeading(new Pose2d(goPlaceX, goPlaceY, Math.toRadians(goPlaceHeading)), Math.toRadians(0))
                 .build();
 
@@ -186,7 +193,7 @@ public class splineRight extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(park2X, park2Y), Math.toRadians(parkHeading))
                 .build();
 
-        Trajectory BACK = drive.trajectoryBuilder(new Pose2d())
+        Trajectory BACK = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(-90)))
                 .forward(-5)
                 .build();
 
@@ -257,9 +264,10 @@ public class splineRight extends LinearOpMode {
 
         CS.setPosition(closeClaw);
         sleep(1000);
-        setArm(25, 0.90);
+        setArm(25, 0.91);
         drive.followTrajectory(GOOUT);
         drive.turn(Math.toRadians(turn1));
+        setArm(25, 0.91);
         CS.setPosition(openClaw);
         sleep(1000);
         drive.turn(Math.toRadians(turn2));
@@ -269,6 +277,8 @@ public class splineRight extends LinearOpMode {
         sleep(1000);
         setArm(25, 0);
         drive.followTrajectory(BACKUP);
+        setArm(25, liftLittle);
+        drive.followTrajectory(BACKUP1);
         setArm(25, 0.90);
         drive.followTrajectory(GOPLACE);
         CS.setPosition(openClaw);
@@ -280,7 +290,7 @@ public class splineRight extends LinearOpMode {
             drive.followTrajectory(PARK3);
         } else {
         }
-        drive.turn(turnEnd);
+        drive.turn(Math.toRadians(turnEnd));
         setArm(0, 0);
         drive.followTrajectory(BACK);
 
