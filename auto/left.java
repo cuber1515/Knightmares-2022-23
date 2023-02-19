@@ -18,9 +18,17 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
+/**
+ * This is auto maxed out
+ * There is no more points our robot is physically capable of scoring
+ * What it does:
+ *   - Places pre-loaded cone on tall junction D3/B3
+ *   - Parks
+ */
+
 @Config
-@Autonomous(group = "drive", name = "backup left")
-public class BackupLeft extends LinearOpMode {
+@Autonomous(group = "drive", name = "left")
+public class left extends LinearOpMode {
     /**
      * EasyOpenCV specific variables
      */
@@ -54,17 +62,16 @@ public class BackupLeft extends LinearOpMode {
     Servo CS; // All of the servos
     double ticksPerRev = 3895.9; // Ticks for the arm motor
     double lTicksPerRev = 145.1; // Ticks for the linear actuator
-    public static double closeClaw = 0.55;
-    public static double openClaw = 0.10;
 
 
     // This can be edited in the FTC Dashboard
+    public static double closeClaw = 0.55;
+    public static double openClaw = 0.10;
     public static double strafeOut = 27.5;
     public static double headOut = 54;
     public static double turn1 = 51;
     public static double turn2 = -51;
     public static double oneBlock = 29;
-    public static double turn5 = -90;
     public static double sTrafe = 5;
 
 
@@ -89,9 +96,8 @@ public class BackupLeft extends LinearOpMode {
         AM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    // Set arm height
+    // Set arm height, first parameter is the linear actuator, second is the arm
     public void setArm(double lHieght, double aHieght) {
-
         LAM.setTargetPosition((int) (lHieght * lTicksPerRev));
         LAM.setPower(1);
         LAM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -131,7 +137,11 @@ public class BackupLeft extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(50);
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap); // wheel motors
+
+        /**
+         * Creates the paths
+         */
 
         drive.setPoseEstimate(new Pose2d());
 
@@ -217,12 +227,12 @@ public class BackupLeft extends LinearOpMode {
             telemetry.update();
         }
 
-        final int aprilValue = tagOfInterest.id;
+        final int aprilValue = tagOfInterest.id; // saves the randomized parking number for later
 
         resetEncoders();
         startEncoders();
 
-        // pre-loaded cone
+        // Actual action
         CS.setPosition(closeClaw);
         sleep(1000);
         setArm(5, 0);
@@ -237,7 +247,7 @@ public class BackupLeft extends LinearOpMode {
         drive.followTrajectory(STRAFEALITTLE);
         setArm(0, 0);
 
-
+        // We take that variable from early with the parking position and now use it to tell the robot where to park
         if (aprilValue == middle) {
             drive.followTrajectory(PARK2);
         } else if (aprilValue == left) {
@@ -245,8 +255,7 @@ public class BackupLeft extends LinearOpMode {
         } else {
         }
 
-//        drive.turn(Math.toRadians(turn5));
-        drive.followTrajectory(BACK);
+        drive.followTrajectory(BACK); // Just to be sure it's in fully, so the claw doesn't poke out of place
 
     }
 

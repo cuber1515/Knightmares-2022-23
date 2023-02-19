@@ -20,9 +20,20 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
+/**
+ * This is supposed to be an add on to our current auto
+ * What it does:
+ *   - [👍]Goes to place the first cone on the tall junction (uses splines to make the path faster and more fluid)
+ *   - [👍]Goes to the stack to grab a cone
+ *   - [👎]After doing so it heads to the medium junction to place a cone
+ *   - [👎]It turns and strafes to the parking spot
+ *
+ * Takes much longer than 30 seconds so this is not going to be used but it is still important to keep this for latter use possibly
+ */
+
 @Config
 @Autonomous(group = "drive", name = "spline right")
-//@Disabled
+@Disabled
 public class splineRight extends LinearOpMode {
     /**
      * EasyOpenCV specific variables
@@ -84,12 +95,12 @@ public class splineRight extends LinearOpMode {
     public static double backup1 = 6;
     public static double goPlaceX = 20;
     public static double goPlaceY = -9.50;
-    public static double goPlaceHeading = 135;
-    public static double turn3 = 45;
+    public static double goPlaceHeading = -135;
+    public static double turn3 = -45;
     public static double park1X = 12;
     public static double park1Y = -9.50;
-    public static double park2X = 60;
-    public static double park2Y = -9.50;
+    public static double park3X = 60;
+    public static double park3Y = -9.50;
     public static double parkHeading = 0;
     public static double turnEnd = -90;
 
@@ -190,7 +201,7 @@ public class splineRight extends LinearOpMode {
                 .build();
 
         Trajectory PARK3 = drive.trajectoryBuilder(GOPLACE.end())
-                .splineToConstantHeading(new Vector2d(park2X, park2Y), Math.toRadians(parkHeading))
+                .splineToConstantHeading(new Vector2d(park3X, park3Y), Math.toRadians(parkHeading))
                 .build();
 
         Trajectory BACK = drive.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(-90)))
@@ -264,10 +275,10 @@ public class splineRight extends LinearOpMode {
 
         CS.setPosition(closeClaw);
         sleep(1000);
-        setArm(25, 0.91);
+        setArm(25, 0.92);
         drive.followTrajectory(GOOUT);
         drive.turn(Math.toRadians(turn1));
-        setArm(25, 0.91);
+        setArm(25, 0.92);
         CS.setPosition(openClaw);
         sleep(1000);
         drive.turn(Math.toRadians(turn2));
@@ -279,11 +290,14 @@ public class splineRight extends LinearOpMode {
         drive.followTrajectory(BACKUP);
         setArm(25, liftLittle);
         drive.followTrajectory(BACKUP1);
-        setArm(25, 0.90);
+        setArm(25, 0.70);
         drive.followTrajectory(GOPLACE);
+        setArm(25, 0.90);
+        setArm(0, 0.90);
         CS.setPosition(openClaw);
         sleep(1000);
         drive.turn(Math.toRadians(turn3));
+        setArm(0, 0);
         if (aprilValue == left) {
             drive.followTrajectory(PARK1);
         } else if (aprilValue == right) {
