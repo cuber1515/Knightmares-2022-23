@@ -30,6 +30,7 @@ public class teleOp extends LinearOpMode {
     public static double lamHghtB = 0;
     public static double armHghtY = 0.90;
     public static double lamHghtY = 25;
+    public static double stackHght = 0.35;
 
     /**
      * ALL THE METHODS
@@ -205,6 +206,38 @@ public class teleOp extends LinearOpMode {
                 AM.setPower(1);
                 AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while (LAM.isBusy() || AM.isBusy()){
+                    Pose2d pOseEstimate = drive.getPoseEstimate(); // Needed for tracking  purposes
+
+                    // This rotates the robot in it's mind the opposite of the direction
+                    // it is being rotated, it's what allows the robot to be field centric
+                    Vector2d inPut = new Vector2d(
+                            -gamepad1.left_stick_y * speed,
+                            -gamepad1.left_stick_x * speed
+                    ).rotated(-poseEstimate.getHeading());
+
+                    // Pass in the rotated input + right stick value for rotation
+                    // Rotation is not part of the rotated input thus must be passed in separately
+                    drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    inPut.getX(),
+                                    inPut.getY(),
+                                    -gamepad1.right_stick_x * speed
+                            )
+                    );
+
+                    drive.update(); // IDK, you need it though
+                }
+                LAM.setPower(0);
+                AM.setPower(0);
+                exitEncoders();
+            }
+
+            if (gamepad2.x) {
+                startEncoders();
+                AM.setTargetPosition((int) (stackHght * 3895.9));
+                AM.setPower(1);
+                AM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while (AM.isBusy()){
                     Pose2d pOseEstimate = drive.getPoseEstimate(); // Needed for tracking  purposes
 
                     // This rotates the robot in it's mind the opposite of the direction
