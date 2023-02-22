@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Config
-@TeleOp(group = "drive", name = "Field")
-public class teleOp extends LinearOpMode {
+@TeleOp(group = "drive", name = "presets")
+public class Presets extends LinearOpMode {
     /**
      * ALL THE VARIABLES
      */
